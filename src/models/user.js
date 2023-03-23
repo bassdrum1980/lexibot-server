@@ -14,6 +14,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       trim: true,
       required: true,
+      unique: true,
       lowercase: true,
     },
     hashedPassword: {
@@ -50,7 +51,6 @@ userSchema.methods = {
   authenticate: function (password) {
     return this.encryptPassword(password) === this.hashedPassword;
   },
-
   encryptPassword: function (password) {
     if (!password) return '';
     try {
@@ -66,3 +66,6 @@ userSchema.methods = {
     return String(Math.round(new Date().valueOf() * Math.random()));
   },
 };
+
+const User = mongoose.model('User', userSchema);
+export default User;
