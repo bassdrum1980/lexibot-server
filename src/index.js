@@ -11,6 +11,12 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 8000;
 
+// db connection
+mongoose
+  .connect(process.env.DATABASE)
+  .then(() => console.log('DB connected'))
+  .catch((err) => console.log('DB CONNECTION ERROR: ' + err));
+
 // app middlewares
 app.use(morgan('dev'));
 if ((process.env.NODE_ENV = 'development')) {
