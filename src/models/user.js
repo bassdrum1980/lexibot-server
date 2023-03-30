@@ -27,8 +27,10 @@ const userSchema = new mongoose.Schema(
       default: 'subscriber',
     },
     resetPasswordLink: {
-      data: String,
-      default: '',
+      data: {
+        type: String,
+        default: '',
+      },
     },
   },
   { timestamps: true }
@@ -38,12 +40,11 @@ const userSchema = new mongoose.Schema(
 userSchema
   .virtual('password')
   .set(function (password) {
-    this._password = password;
     this.salt = this.makeSalt();
     this.hashedPassword = this.encryptPassword(password);
   })
   .get(function () {
-    return this._password;
+    return this.hashedPassword;
   });
 
 // methods
@@ -57,7 +58,7 @@ userSchema.methods = {
       return crypto
         .createHmac('sha1', this.salt)
         .update(password)
-        .digesst('hex');
+        .digest('hex');
     } catch (error) {
       return '';
     }
