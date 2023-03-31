@@ -5,6 +5,7 @@ import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
 import * as dotenv from 'dotenv';
 import authRouter from './routes/auth.js';
+import freeDictionaryRouter from './routes/freedictionary.js';
 
 dotenv.config();
 
@@ -23,9 +24,13 @@ if ((process.env.NODE_ENV = 'development')) {
   app.use(cors({ origin: 'http://localhost:3000' }));
 }
 app.use(bodyParser.json());
+app.use(express.urlencoded({ extended: true }));
 
+// TODO: protect api routes
+// TODO: expose signin and signup routes
 // route middlewares
 app.use('/api', authRouter);
+app.use('/freedictionary', freeDictionaryRouter);
 
 app.listen(port, () => {
   console.log(`listening port ${port} - ${process.env.NODE_ENV}`);
