@@ -1,11 +1,20 @@
+import { fetchWord } from '../utils/api.js';
+
 export const getFreeDictionary = async (req, res) => {
-  console.log(`getFreeDictionary req.params.word: ${req.params.word}`);
-  return res.json({ data: req.params.word });
-  // try {
-  //   const freeDictionary = await FreeDictionary.find();
-  //   res.json(freeDictionary);
-  // } catch (error) {
-  //   console.error(error.message);
-  //   res.status(500).send('Server Error');
-  // }
+  const word = req.params.word;
+  console.log(`getFreeDictionary word: ${word}`);
+
+  try {
+    const data = await fetchWord(word);
+    return res.json({ data });
+  } catch (error) {
+    console.error(error.message);
+    if (error.response && error.response.status === 404) {
+      return res.status(404).json({
+        message: 'Word not found in the dictionary',
+      });
+    } else {
+      return res.status(500).json({ message: 'Server Error' });
+    }
+  }
 };
