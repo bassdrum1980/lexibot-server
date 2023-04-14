@@ -1,13 +1,11 @@
+import 'dotenv/config.js';
 import express from 'express';
 import morgan from 'morgan';
 import cors from 'cors';
 import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
-import * as dotenv from 'dotenv';
 import authRouter from './routes/auth.js';
 import freeDictionaryRouter from './routes/freedictionary.js';
-
-dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 8000;
@@ -26,9 +24,9 @@ if ((process.env.NODE_ENV = 'development')) {
 app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: true }));
 
+// route middlewares
 // TODO: protect api routes
 // TODO: expose signin and signup routes
-// route middlewares
 app.use('/api', authRouter);
 app.use('/freedictionary', freeDictionaryRouter);
 
