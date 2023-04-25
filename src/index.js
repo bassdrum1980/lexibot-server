@@ -5,8 +5,9 @@ import cors from 'cors';
 import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
 import authRouter from './routes/auth.js';
-import userRouter from './routes/user.js';
+import profileRouter from './routes/profile.js';
 import freeDictionaryRouter from './routes/freedictionary.js';
+import { protect } from './middlewares/auth.js';
 
 const app = express();
 const port = process.env.PORT || 8000;
@@ -25,12 +26,12 @@ if ((process.env.NODE_ENV = 'development')) {
 app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: true }));
 
-// route middlewares
-// TODO: protect api routes
-// TODO: expose signin and signup routes
-app.use('/api', authRouter);
-app.use('/api', userRouter);
-app.use('/freedictionary', freeDictionaryRouter);
+// Public routes
+app.use('/auth', authRouter);
+
+// Protected routes
+app.use('/profile', protect, profileRouter);
+app.use('/freedictionary', protect, freeDictionaryRouter);
 
 app.listen(port, () => {
   console.log(`listening port ${port} - ${process.env.NODE_ENV}`);
