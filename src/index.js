@@ -5,6 +5,7 @@ import cors from 'cors';
 import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
 import authRouter from './routes/auth.js';
+import userRouter from './routes/user.js';
 import freeDictionaryRouter from './routes/freedictionary.js';
 
 const app = express();
@@ -28,6 +29,7 @@ app.use(express.urlencoded({ extended: true }));
 // TODO: protect api routes
 // TODO: expose signin and signup routes
 app.use('/api', authRouter);
+app.use('/api', userRouter);
 app.use('/freedictionary', freeDictionaryRouter);
 
 app.listen(port, () => {
