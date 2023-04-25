@@ -5,7 +5,7 @@ import mail from '@sendgrid/mail';
 mail.setApiKey(process.env.SENDGRID_API_KEY);
 
 export const signUp = async (req, res) => {
-  const { name, email, password } = req.body;
+  const { firstName, email, password } = req.body;
 
   User.findOne({ email })
     .then((user) => {
@@ -18,7 +18,7 @@ export const signUp = async (req, res) => {
 
       // Generate a jwt-token with user name, email and password
       const token = jwt.sign(
-        { name, email, password },
+        { firstName, email, password },
         process.env.JWT_ACCOUNT_ACTIVATION,
         {
           expiresIn: '20m',
@@ -32,7 +32,7 @@ export const signUp = async (req, res) => {
         subject: 'Account activation link',
         html: `
             <h1>Please use the following link to activate your account</h1>
-            <p>${process.env.CLIENT_URL}/auth/activate/${token}</p>
+            <p>${process.env.CLIENT_URL}/activate/${token}/</p>
             <hr />
             <p>This email may contain sensitive information</p>
             <p>${process.env.CLIENT_URL}</p>
@@ -68,12 +68,12 @@ export const activateAccount = (req, res) => {
       if (error) {
         console.log('JWT VERIFY IN ACCOUNT ACTIVATION ERROR', error);
         return res.status(401).json({
-          error: 'Expired link. Signup again.',
+          error: 'Expired link.',
         });
       }
+      const { firstName, email, password } = decoded;
 
-      const { name, email, password } = jwt.decode(token);
-      const user = new User({ name, email, password });
+      const user = new User({ firstName, email, password });
       user
         .save()
         .then((user) => {
@@ -85,12 +85,12 @@ export const activateAccount = (req, res) => {
         .catch((error) => {
           console.log('SAVE USER IN ACCOUNT ACTIVATION ERROR', error);
           return res.status(401).json({
-            error: 'Error saving user in database. Try signup again.',
+            error: 'Error saving user in database.',
           });
         });
     });
   } else {
-    return res.json({
+    return res.status(400).json({
       message: 'Something went wrong. Try again.',
     });
   }
@@ -105,25 +105,26 @@ export const signIn = (req, res) => {
       // if wrong password, return error
       if (!user.authenticate(password)) {
         return res.status(400).json({
-          error: 'Email and password do not match.',
+          error: 'Invalid Credentials',
         });
       }
 
       // generate a token and send to client
       const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
+        algorithm: 'HS256',
         expiresIn: '7d',
       });
 
       // send user info and token to client
-      const { _id, name, email, role } = user;
+      const { _id, firstName, email, role } = user;
       return res.json({
         token,
-        user: { _id, name, email, role },
+        user: { _id, firstName, email, role },
       });
     })
     .catch((error) => {
       return res.status(400).json({
-        error: "User doesn't exist. Please signup.",
+        error: 'User Not Found',
       });
     });
 };

@@ -4,7 +4,7 @@ import crypto from 'node:crypto';
 // user schema
 const userSchema = new mongoose.Schema(
   {
-    name: {
+    firstName: {
       type: String,
       trim: true,
       required: true,
