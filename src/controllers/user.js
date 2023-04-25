@@ -1,8 +1,8 @@
 import User from '../models/user.js';
 
 // Get user info
-export const readUser = async (req, res) => {
-  const userId = req.auth._id;
+export const getUser = async (req, res) => {
+  const userId = req.user._id;
   const user = await User.findById(userId)
     .then((user) => {
       // remove sensitive data
@@ -22,7 +22,7 @@ export const readUser = async (req, res) => {
 // Update user info
 export const updateUser = async (req, res) => {
   const { firstName, password } = req.body;
-  User.findOne({ _id: req.auth._id })
+  User.findOne({ _id: req.user._id })
     .then((user) => {
       if (!firstName) {
         return res.status(400).json({
