@@ -1,0 +1,52 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            Int        @id @default(autoincrement())
+  name          String?
+  email         String     @unique
+  hash          String
+  attributes    Json?
+  statistics    Json?
+  createdAt     DateTime   @default(now()) @db.Timestamp(6)
+  modifiedAt    DateTime   @default(now()) @db.Timestamp(6)
+  cards         Card[]
+  practices     Practice[]
+}
+
+model Card {
+  id            Int        @id @default(autoincrement())
+  userId        Int
+  word          String
+  status        CardStatus
+  nextDate      DateTime?  @db.Date
+  attributes    Json?
+  createdAt     DateTime   @default(now()) @db.Timestamp(6)
+  modifiedAt    DateTime   @default(now()) @db.Timestamp(6)
+  user          User       @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  practices     Practice[]
+}
+
+model Practice {
+  id            Int        @id @default(autoincrement())
+  userId        Int
+  cardId        Int
+  status        CardStatus 
+  createdAt     DateTime   @default(now()) @db.Timestamp(6)
+  card          Card       @relation(fields: [cardId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user          User       @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+enum CardStatus {
+  new
+  relearning
+  inactive
+  review
+}
+
