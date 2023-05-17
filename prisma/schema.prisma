@@ -12,6 +12,7 @@ model User {
   name          String?
   email         String     @unique
   hash          String
+  salt          String
   attributes    Json?
   statistics    Json?
   createdAt     DateTime   @default(now()) @db.Timestamp(6)
