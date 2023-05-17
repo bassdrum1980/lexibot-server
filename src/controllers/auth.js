@@ -1,3 +1,4 @@
+import prisma from '../db.js';
 import User from '../models/user.js';
 import jwt from 'jsonwebtoken';
 import mail from '@sendgrid/mail';
@@ -7,56 +8,50 @@ mail.setApiKey(process.env.SENDGRID_API_KEY);
 export const signUp = async (req, res) => {
   const { firstName, email, password } = req.body;
 
-  User.findOne({ email })
-    .then((user) => {
-      // If the user exists, return an error
-      if (user) {
-        return res.status(400).json({
-          error: 'Email is taken',
-        });
-      }
+  // If the user exists, return an error
+  if (await prisma.user.findUnique({ where: { email } })) {
+    return res.status(400).json({
+      error: 'Email is taken',
+    });
+  }
 
-      // Generate a jwt-token with user name, email and password
-      const token = jwt.sign(
-        { firstName, email, password },
-        process.env.JWT_ACCOUNT_ACTIVATION,
-        {
-          expiresIn: '20m',
-        }
-      );
+  // Generate a jwt-token with user name, email and password
+  const token = jwt.sign(
+    { firstName, email, password },
+    process.env.JWT_ACCOUNT_ACTIVATION,
+    {
+      expiresIn: '1d',
+    }
+  );
 
-      // Compose an email
-      const emailData = {
-        from: process.env.EMAIL_FROM,
-        to: email,
-        subject: 'Account activation link',
-        html: `
-            <h1>Please use the following link to activate your account</h1>
-            <p>${process.env.CLIENT_URL}/activate/${token}/</p>
-            <hr />
-            <p>This email may contain sensitive information</p>
-            <p>${process.env.CLIENT_URL}</p>
-            `,
-      };
+  // Compose an email
+  const emailData = {
+    from: process.env.EMAIL_FROM,
+    to: email,
+    subject: 'Account activation link',
+    html: `
+        <h1>Please use the following link to activate your account</h1>
+        <p>${process.env.CLIENT_URL}/activate/${token}/</p>
+        <hr />
+        <p>This email may contain sensitive information</p>
+        <p>${process.env.CLIENT_URL}</p>
+        `,
+  };
 
-      // Send the email
-      mail
-        .send(emailData)
-        .then((sent) => {
-          console.log('SIGNUP EMAIL SENT', sent);
-          return res.json({
-            message: `Email has been sent to ${email}. Follow the instructions to activate your account.`,
-          });
-        })
-        .catch((error) => {
-          console.log('SIGNUP EMAIL SENT ERROR', error);
-          return res.json({
-            message: error.message,
-          });
-        });
+  // Send the email
+  mail
+    .send(emailData)
+    .then((sent) => {
+      console.log('SIGNUP EMAIL SENT', sent);
+      return res.json({
+        message: `Email has been sent to ${email}. Follow the instructions to activate your account.`,
+      });
     })
     .catch((error) => {
-      console.log(error);
+      console.log('SIGNUP EMAIL SENT ERROR', error);
+      return res.json({
+        message: error.message,
+      });
     });
 };
 
