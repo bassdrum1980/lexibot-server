@@ -5,7 +5,7 @@ export const protect = (req, res, next) => {
 
   if (!bearer) {
     res.status(401);
-    res.send('Not authorized');
+    res.json({ error: 'Not authorized' });
     return;
   }
 
