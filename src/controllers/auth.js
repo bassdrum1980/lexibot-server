@@ -2,6 +2,7 @@ import prisma from '../db.js';
 import User from '../models/user.js';
 import jwt from 'jsonwebtoken';
 import mail from '@sendgrid/mail';
+import { makeSalt, encryptPassword } from '../utils/auth.js';
 
 mail.setApiKey(process.env.SENDGRID_API_KEY);
 
@@ -58,33 +59,54 @@ export const signUp = async (req, res) => {
 export const activateAccount = (req, res) => {
   const { token } = req.body;
 
+  // If token is provided
   if (token) {
-    jwt.verify(token, process.env.JWT_ACCOUNT_ACTIVATION, (error, decoded) => {
-      if (error) {
-        console.log('JWT VERIFY IN ACCOUNT ACTIVATION ERROR', error);
-        return res.status(401).json({
-          error: 'Expired link.',
-        });
-      }
-      const { firstName, email, password } = decoded;
+    // Verify the token
+    jwt.verify(
+      token,
+      process.env.JWT_ACCOUNT_ACTIVATION,
+      async (error, decoded) => {
+        // If token is expired
+        if (error) {
+          console.log('JWT VERIFY IN ACCOUNT ACTIVATION ERROR', error);
+          return res.status(401).json({
+            error: 'Expired link.',
+          });
+        }
 
-      const user = new User({ firstName, email, password });
-      user
-        .save()
-        .then((user) => {
+        // If token is ok
+        // Get user info from token
+        const { firstName, email, password } = decoded;
+
+        // Save user in database
+        try {
+          const salt = makeSalt();
+          const user = await prisma.user.create({
+            data: {
+              name: firstName,
+              email,
+              salt,
+              hash: encryptPassword(password, salt),
+            },
+          });
           console.log('SAVE USER IN ACCOUNT ACTIVATION SUCCESS', user);
+
           return res.json({
             message: 'Signup success. Please signin.',
           });
-        })
-        .catch((error) => {
-          console.log('SAVE USER IN ACCOUNT ACTIVATION ERROR', error);
-          return res.status(401).json({
-            error: 'Error saving user in database.',
+        } catch (e) {
+          console.error('SAVE USER IN ACCOUNT ACTIVATION ERROR', e);
+
+          return res.status(500).json({
+            message: 'Server Error',
           });
-        });
-    });
+        }
+      }
+    );
   } else {
+    // If token is not provided
+    console.log('NO TOKEN PROVIDED IN ACCOUNT ACTIVATION');
+
     return res.status(400).json({
       message: 'Something went wrong. Try again.',
     });
