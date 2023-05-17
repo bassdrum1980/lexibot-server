@@ -1,8 +1,7 @@
 import prisma from '../db.js';
-import User from '../models/user.js';
 import jwt from 'jsonwebtoken';
 import mail from '@sendgrid/mail';
-import { makeSalt, encryptPassword } from '../utils/auth.js';
+import { makeSalt, encryptPassword, comparePasswords } from '../utils/auth.js';
 
 mail.setApiKey(process.env.SENDGRID_API_KEY);
 
@@ -113,35 +112,45 @@ export const activateAccount = (req, res) => {
   }
 };
 
-export const signIn = (req, res) => {
+export const signIn = async (req, res) => {
+  // Get user info from request body
   const { email, password } = req.body;
-  // check if user exists
-  User.findOne({ email })
-    .then((user) => {
-      // authenticate
-      // if wrong password, return error
-      if (!user.authenticate(password)) {
-        return res.status(400).json({
-          error: 'Invalid Credentials',
-        });
-      }
 
-      // generate a token and send to client
-      const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
-        algorithm: 'HS256',
-        expiresIn: '7d',
-      });
+  try {
+    // Find user in database
+    const user = await prisma.user.findUnique({ where: { email } });
 
-      // send user info and token to client
-      const { _id, firstName, email, role } = user;
-      return res.json({
-        token,
-        user: { _id, firstName, email, role },
-      });
-    })
-    .catch((error) => {
+    // If user not found, return error
+    if (!user) {
       return res.status(400).json({
         error: 'User Not Found',
       });
+    }
+
+    // If wrong password, return error
+    if (!comparePasswords(password, user.hash, user.salt)) {
+      return res.status(400).json({
+        error: 'Invalid Credentials',
+      });
+    }
+
+    // Generate a token
+    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
+      algorithm: 'HS256',
+      expiresIn: '7d',
     });
+
+    // Send user info and token to client
+    return res.json({
+      token,
+      user: { id: user.id, firstName: user.name, email: user.email },
+    });
+  } catch (e) {
+    // Any other error, return error
+    console.error('SIGN IN ERROR', e);
+
+    return res.status(500).json({
+      message: 'Server Error',
+    });
+  }
 };
