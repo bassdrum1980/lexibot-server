@@ -13,6 +13,6 @@ export function encryptPassword(password, salt) {
   }
 }
 
-export function comparePasswords(hash, password, salt) {
+export function comparePasswords(password, hash, salt) {
   return encryptPassword(password, salt) === hash;
 }
