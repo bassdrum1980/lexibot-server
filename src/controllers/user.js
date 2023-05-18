@@ -1,20 +1,37 @@
-import User from '../models/user.js';
+import prisma from '../db.js';
 
-// Get user info
 export const getUser = async (req, res) => {
-  const userId = req.user._id;
-  const user = await User.findById(userId)
-    .then((user) => {
-      // remove sensitive data
-      user.hashedPassword = undefined;
-      user.salt = undefined;
-      return user;
-    })
-    .catch((error) => {
-      console.log('User not found: ', error);
-      res.status(400).json({
+  // Get user id from req.user (attached by 'protect' middleware)
+  const userId = req.user.id;
+
+  try {
+    // Get user from db
+    const user = await prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+      },
+    });
+
+    // If no user found, return error
+    if (!user) {
+      console.error('User not found: ', error);
+      return res.status(400).json({
         error: 'User not found',
       });
+    }
+
+    // Return user to client
+    return res.json(user);
+  } catch (e) {
+    // All unhandled errors are caught here
+    console.error('ERROR IN GETTING USER', e);
+    res.status(500).json({
+      error: 'Server error',
     });
-  res.json(user);
+  }
 };
