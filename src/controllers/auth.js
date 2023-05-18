@@ -8,8 +8,12 @@ mail.setApiKey(process.env.SENDGRID_API_KEY);
 export const signUp = async (req, res) => {
   const { firstName, email, password } = req.body;
 
-  // If the user exists, return an error
-  if (await prisma.user.findUnique({ where: { email } })) {
+  // Check if user exists
+  const userExists = await prisma.user.count({
+    where: { email },
+  });
+
+  if (userExists) {
     return res.status(400).json({
       error: 'Email is taken',
     });
@@ -38,78 +42,81 @@ export const signUp = async (req, res) => {
         `,
   };
 
-  // Send the email
-  mail
-    .send(emailData)
-    .then((sent) => {
-      console.log('SIGNUP EMAIL SENT', sent);
-      return res.json({
-        message: `Email has been sent to ${email}. Follow the instructions to activate your account.`,
-      });
-    })
-    .catch((error) => {
-      console.log('SIGNUP EMAIL SENT ERROR', error);
-      return res.json({
-        message: error.message,
-      });
+  // Send email
+  try {
+    await mail.send(emailData);
+
+    return res.json({
+      message: `Email has been sent to ${email}. Follow the instructions to activate your account.`,
     });
+  } catch (error) {
+    console.log('SIGNUP EMAIL SENT ERROR', error);
+
+    return res.json({
+      message: error.message,
+    });
+  }
 };
 
 export const activateAccount = (req, res) => {
   const { token } = req.body;
 
-  // If token is provided
-  if (token) {
-    // Verify the token
-    jwt.verify(
-      token,
-      process.env.JWT_ACCOUNT_ACTIVATION,
-      async (error, decoded) => {
-        // If token is expired
-        if (error) {
-          console.log('JWT VERIFY IN ACCOUNT ACTIVATION ERROR', error);
-          return res.status(401).json({
-            error: 'Expired link.',
-          });
-        }
-
-        // If token is ok
-        // Get user info from token
-        const { firstName, email, password } = decoded;
-
-        // Save user in database
-        try {
-          const salt = makeSalt();
-          const user = await prisma.user.create({
-            data: {
-              name: firstName,
-              email,
-              salt,
-              hash: encryptPassword(password, salt),
-            },
-          });
-          console.log('SAVE USER IN ACCOUNT ACTIVATION SUCCESS', user);
-
-          return res.json({
-            message: 'Signup success. Please signin.',
-          });
-        } catch (e) {
-          console.error('SAVE USER IN ACCOUNT ACTIVATION ERROR', e);
-
-          return res.status(500).json({
-            message: 'Server Error',
-          });
-        }
-      }
-    );
-  } else {
-    // If token is not provided
+  // If token is not provided
+  if (!token) {
     console.log('NO TOKEN PROVIDED IN ACCOUNT ACTIVATION');
 
     return res.status(400).json({
       message: 'Something went wrong. Try again.',
     });
   }
+
+  // If token is provided
+  // Verify the token
+  jwt.verify(
+    token,
+    process.env.JWT_ACCOUNT_ACTIVATION,
+    async (error, decoded) => {
+      // If token is expired
+      if (error) {
+        console.log('JWT VERIFY IN ACCOUNT ACTIVATION ERROR', error);
+
+        return res.status(401).json({
+          error: 'Expired link.',
+        });
+      }
+
+      // If token is ok
+      // Get user info from token
+      const { firstName, email, password } = decoded;
+
+      // Save user in database
+      try {
+        const salt = makeSalt();
+        const hash = encryptPassword(password, salt);
+
+        const user = await prisma.user.create({
+          data: {
+            name: firstName,
+            email,
+            salt,
+            hash,
+          },
+        });
+
+        console.log('SAVE USER IN ACCOUNT ACTIVATION SUCCESS', user);
+
+        return res.json({
+          message: 'Signup success. Please signin.',
+        });
+      } catch (e) {
+        console.error('SAVE USER IN ACCOUNT ACTIVATION ERROR', e);
+
+        return res.status(500).json({
+          message: 'Server Error',
+        });
+      }
+    }
+  );
 };
 
 export const signIn = async (req, res) => {
@@ -145,9 +152,9 @@ export const signIn = async (req, res) => {
       token,
       user: { id: user.id, firstName: user.name, email: user.email },
     });
-  } catch (e) {
+  } catch (error) {
     // Any other error, return error
-    console.error('SIGN IN ERROR', e);
+    console.error('SIGN IN ERROR', error);
 
     return res.status(500).json({
       message: 'Server Error',
