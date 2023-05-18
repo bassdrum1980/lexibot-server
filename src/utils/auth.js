@@ -5,7 +5,6 @@ export function makeSalt() {
 }
 
 export function encryptPassword(password, salt) {
-  if (!password) return '';
   try {
     return crypto.createHmac('sha1', salt).update(password).digest('hex');
   } catch (error) {
