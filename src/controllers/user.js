@@ -17,9 +17,9 @@ export const getUser = async (req, res) => {
       },
     });
 
-    // If no user found, return error
+    // If no user found, return 400
     if (!user) {
-      console.error('User not found: ', error);
+      console.error('USER NOT FOUND IN GET USER');
       return res.status(400).json({
         error: 'User not found',
       });
@@ -27,10 +27,10 @@ export const getUser = async (req, res) => {
 
     // Return user to client
     return res.json(user);
-  } catch (e) {
+  } catch (error) {
     // All unhandled errors are caught here
-    console.error('ERROR IN GETTING USER', e);
-    res.status(500).json({
+    console.error('ERROR IN GET USER: ', error);
+    return res.status(500).json({
       error: 'Server error',
     });
   }
