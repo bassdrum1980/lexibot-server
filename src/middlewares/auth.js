@@ -22,7 +22,7 @@ export const protect = (req, res, next) => {
     req.user = user;
     next();
   } catch (error) {
-    console.log('Error: ', error);
+    console.log('ERROR JWT VERIFICATION IN PROTECT', error);
     res.status(401);
     res.json({ error: 'Invalid token' });
     return;
