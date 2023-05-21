@@ -25,7 +25,7 @@ model Card {
   id            Int        @id @default(autoincrement())
   userId        Int
   word          String
-  status        CardStatus
+  status        CardStatus @default(new)
   nextDate      DateTime?  @db.Date
   attributes    Json?
   createdAt     DateTime   @default(now()) @db.Timestamp(6)
