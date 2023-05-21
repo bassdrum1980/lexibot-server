@@ -1,6 +1,6 @@
 import prisma from '../db.js';
 
-async function postCard(req, res) {
+async function createCard(req, res) {
   let responseStatus;
   let result;
   const { userId, word, attributes } = req.body;
@@ -105,7 +105,7 @@ async function deleteCard(req, res) {
 }
 
 export {
-  postCard,
+  createCard,
   getCard,
   updateCard,
   deleteCard,

@@ -33,7 +33,7 @@ app.use('/auth', authRouter);
 // Protected routes
 app.use('/profile', protect, profileRouter);
 app.use('/freedictionary', protect, freeDictionaryRouter);
-app.use('/card', protect, cardRouter);
+app.use('/cards', protect, cardRouter);
 
 app.listen(port, () => {
   console.log(`listening port ${port} - ${process.env.NODE_ENV}`);
