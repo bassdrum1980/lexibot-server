@@ -43,8 +43,13 @@ async function getCard(req, res) {
 
   try {
     const foundCard = await prisma.card.findUnique({ where, select });
-    responseStatus = 200;
-    result = { data: foundCard };
+    if (!foundCard) {
+      responseStatus = 404;
+      result = { error: 'card not found' };
+    } else {
+      responseStatus = 200;
+      result = { data: foundCard };
+    }
   } catch (error) {
     console.error(
       '[contollers/card/getCard]' +
