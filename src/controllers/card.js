@@ -4,7 +4,7 @@ async function createCard(req, res) {
   let responseStatus;
   let result;
   const { userId, word, attributes } = req.body;
-  console.log(`[contollers/card/postCard] req.body = ${req.body}`);
+  console.log(`[contollers/card/postCard] req.body = ${JSON.stringify(req.body)}`);
 
   const newCard = {
     userId,
@@ -56,7 +56,7 @@ async function updateCard(req, res) {
   const id = Number(req.params.id);
   console.log(`[contollers/card/updateCard] id = ${id}`);
   const { word, attributes, status } = req.body;
-  console.log(`[contollers/card/postCard] req.body = ${req.body}`);
+  console.log(`[contollers/card/postCard] req.body = ${JSON.stringify(req.body)}`);
 
   const where = { id };
   const data = { word, attributes, status };
