@@ -1,7 +1,7 @@
 import prisma from '../db.js';
 
 async function postCard(req, res) {
-  let status;
+  let responseStatus;
   let result;
   const { userId, word, attributes } = req.body;
   console.log(`[contollers/card/postCard] userId = ${userId}`);
@@ -16,22 +16,22 @@ async function postCard(req, res) {
 
   try {
     const createdCard = await prisma.card.create({ data: newCard });
-    status = 200;
+    responseStatus = 200;
     result = { data: createdCard };
   } catch (error) {
     console.error(
       '[contollers/card/postCard]' +
       'card creation error: ' +
       `userId = ${userId}, word = ${word}, attributes = ${JSON.stringify(attributes)}, error = ${error}`);
-    status = 500;
+    responseStatus = 500;
     result = { error: 'server error' };
   }
 
-  return res.status(status).json(result);
+  return res.status(responseStatus).json(result);
 }
 
 async function getCard(req, res) {
-  let status;
+  let responseStatus;
   let result;
   const id = Number(req.params.id);
   console.log(`[contollers/card/getCard] id = ${id}`);
@@ -40,20 +40,50 @@ async function getCard(req, res) {
 
   try {
     const foundCard = await prisma.card.findUnique({ where });
-    status = 200;
+    responseStatus = 200;
     result = { data: foundCard };
   } catch (error) {
     console.error(
       '[contollers/card/getCard]' +
       `card find error: id = ${id}, error = ${error}`);
-    status = 500;
+    responseStatus = 500;
     result = { error: 'server error' };
   }
 
-  return res.status(status).json(result);
+  return res.status(responseStatus).json(result);
+}
+
+async function updateCard(req, res) {
+  let responseStatus;
+  let result;
+  const id = Number(req.params.id);
+  console.log(`[contollers/card/updateCard] id = ${id}`);
+  const { word, attributes, status } = req.body;
+  console.log(`[contollers/card/updateCard] word = ${word}`);
+  console.log(`[contollers/card/updateCard] attributes = ${JSON.stringify(attributes)}`);
+  console.log(`[contollers/card/updateCard] status = ${status}`);
+
+  const where = { id };
+  const data = { word, attributes, status };
+
+  try {
+    const updatedCard = await prisma.card.update({ where, data });
+    responseStatus = 200;
+    result = { data: updatedCard };
+  } catch (error) {
+    console.error(
+      '[contollers/card/updateCard]' +
+      'card update error: ' +
+      `id = ${id}, word = ${word}, attributes = ${JSON.stringify(attributes)}, error = ${error}`);
+    responseStatus = 500;
+    result = { error: 'server error' };
+  }
+
+  return res.status(responseStatus).json(result);
 }
 
 export {
   postCard,
   getCard,
+  updateCard,
 };
