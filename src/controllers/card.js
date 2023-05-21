@@ -21,8 +21,7 @@ async function postCard(req, res) {
   } catch (error) {
     console.error(
       '[contollers/card/postCard]' +
-      'card creation error: ' +
-      `userId = ${userId}, word = ${word}, attributes = ${JSON.stringify(attributes)}, error = ${error}`);
+      `card creation error: req.body = ${JSON.stringify(req.body)}, error = ${error}`);
     responseStatus = 500;
     result = { error: 'server error' };
   }
@@ -74,7 +73,30 @@ async function updateCard(req, res) {
     console.error(
       '[contollers/card/updateCard]' +
       'card update error: ' +
-      `id = ${id}, word = ${word}, attributes = ${JSON.stringify(attributes)}, error = ${error}`);
+      `id = ${id}, req.body = ${JSON.stringify(req.body)}, error = ${error}`);
+    responseStatus = 500;
+    result = { error: 'server error' };
+  }
+
+  return res.status(responseStatus).json(result);
+}
+
+async function deleteCard(req, res) {
+  let responseStatus;
+  let result;
+  const id = Number(req.params.id);
+  console.log(`[contollers/card/deleteCard] id = ${id}`);
+
+  const where = { id };
+
+  try {
+    const deletedCard = await prisma.card.delete({ where });
+    responseStatus = 200;
+    result = { data: deletedCard };
+  } catch (error) {
+    console.error(
+      '[contollers/card/deleteCard]' +
+      `card delete error: id = ${id}, error = ${error}`);
     responseStatus = 500;
     result = { error: 'server error' };
   }
@@ -86,4 +108,5 @@ export {
   postCard,
   getCard,
   updateCard,
+  deleteCard,
 };
