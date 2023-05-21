@@ -34,9 +34,15 @@ async function getCard(req, res) {
   console.log(`[contollers/card/getCard] id = ${id}`);
 
   const where = { id };
+  const select = {
+    id: true,
+    word: true,
+    status: true,
+    attributes: true,
+  };
 
   try {
-    const foundCard = await prisma.card.findUnique({ where });
+    const foundCard = await prisma.card.findUnique({ where, select });
     responseStatus = 200;
     result = { data: foundCard };
   } catch (error) {
