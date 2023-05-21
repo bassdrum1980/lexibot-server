@@ -21,7 +21,7 @@ async function createCard(req, res) {
       '[contollers/card/postCard]' +
       `card creation error: req.body = ${JSON.stringify(req.body)}, error = ${error}`);
     responseStatus = 500;
-    result = { error: 'server error' };
+    result = { error: 'Server error' };
   }
 
   return res.status(responseStatus).json(result);
@@ -45,7 +45,7 @@ async function getCard(req, res) {
     const foundCard = await prisma.card.findUnique({ where, select });
     if (!foundCard) {
       responseStatus = 404;
-      result = { error: 'card not found' };
+      result = { error: 'Card not found' };
     } else {
       responseStatus = 200;
       result = { data: foundCard };
@@ -55,7 +55,7 @@ async function getCard(req, res) {
       '[contollers/card/getCard]' +
       `card find error: id = ${id}, error = ${error}`);
     responseStatus = 500;
-    result = { error: 'server error' };
+    result = { error: 'Server error' };
   }
 
   return res.status(responseStatus).json(result);
@@ -82,7 +82,7 @@ async function updateCard(req, res) {
       'card update error: ' +
       `id = ${id}, req.body = ${JSON.stringify(req.body)}, error = ${error}`);
     responseStatus = 500;
-    result = { error: 'server error' };
+    result = { error: 'Server error' };
   }
 
   return res.status(responseStatus).json(result);
@@ -105,7 +105,7 @@ async function deleteCard(req, res) {
       '[contollers/card/deleteCard]' +
       `card delete error: id = ${id}, error = ${error}`);
     responseStatus = 500;
-    result = { error: 'server error' };
+    result = { error: 'Server error' };
   }
 
   return res.status(responseStatus).json(result);
