@@ -1,63 +1,37 @@
-import User from '../models/user.js';
+import prisma from '../db.js';
 
-// Get user info
 export const getUser = async (req, res) => {
-  const userId = req.user._id;
-  const user = await User.findById(userId)
-    .then((user) => {
-      // remove sensitive data
-      user.hashedPassword = undefined;
-      user.salt = undefined;
-      return user;
-    })
-    .catch((error) => {
-      console.log('User not found: ', error);
-      res.status(400).json({
-        error: 'User not found',
-      });
-    });
-  res.json(user);
-};
+  // Get user id from req.user (attached by 'protect' middleware)
+  const userId = req.user.id;
 
-// Update user info
-export const updateUser = async (req, res) => {
-  const { firstName, password } = req.body;
-  User.findOne({ _id: req.user._id })
-    .then((user) => {
-      if (!firstName) {
-        return res.status(400).json({
-          error: 'Name is required',
-        });
-      } else {
-        user.firstName = firstName;
-      }
-      if (password) {
-        if (password.length < 6) {
-          return res.status(400).json({
-            error: 'Password should be min 6 characters long',
-          });
-        } else {
-          user.password = password;
-        }
-      }
-      user
-        .save()
-        .then((updatedUser) => {
-          updatedUser.hashedPassword = undefined;
-          updatedUser.salt = undefined;
-          res.json(updatedUser);
-        })
-        .catch((error) => {
-          console.log('USER UPDATE ERROR', error);
-          return res.status(400).json({
-            error: 'User update failed',
-          });
-        });
-    })
-    .catch((error) => {
-      console.log('User not found: ', error);
-      res.status(400).json({
+  try {
+    // Get user from db
+    const user = await prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+      },
+    });
+
+    // If no user found, return 400
+    if (!user) {
+      console.error('USER NOT FOUND IN GET USER');
+      return res.status(400).json({
         error: 'User not found',
       });
+    }
+
+    // Return user to client
+    return res.json(user);
+  } catch (error) {
+    // All unhandled errors are caught here
+    console.error('ERROR IN GET USER: ', error);
+    return res.status(500).json({
+      error: 'Server error',
     });
+  }
 };
