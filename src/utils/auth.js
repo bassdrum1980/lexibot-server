@@ -13,31 +13,34 @@ export function encryptPasswordWithPublicKey(password) {
   } catch (error) {
     console.error(
       '[utils/auth/encryptPasswordWithPublicKey] ' +
-      'Error occured while encrypting password with public key: ' +
-      `error = ${error}`,
+        'Error occured while encrypting password with public key: ' +
+        `error = ${error}`
     );
-    result = null
+    result = null;
   }
 
   return result;
 }
 
 export function decryptPasswordWithPrivateKey(encryptedPassword) {
-  let result
+  let result;
 
   try {
     const privateKeyPem = process.env.PRIVATE_KEY;
     const encryptedBuffer = Buffer.from(encryptedPassword, 'base64');
-    const decryptedBuffer = crypto.privateDecrypt(privateKeyPem, encryptedBuffer);
+    const decryptedBuffer = crypto.privateDecrypt(
+      privateKeyPem,
+      encryptedBuffer
+    );
     const decryptedPassword = decryptedBuffer.toString('utf-8');
     result = decryptedPassword;
   } catch (error) {
     console.error(
       '[utils/auth/decryptPasswordWithPrivateKey] ' +
-      'Error occured while decrypting password with private key: ' +
-      `error = ${error}`,
+        'Error occured while decrypting password with private key: ' +
+        `error = ${error}`
     );
-    result = null
+    result = null;
   }
   return result;
 }
