@@ -30,8 +30,8 @@ export const signUp = async (req, res) => {
   if (!encryptedPassword) {
     console.error(
       '[controllers/auth/signUp] ' +
-      'Error occured while encrypting password with public key: ' +
-      `firstName = ${firstName}, email = ${email}`,
+        'Error occured while encrypting password with public key: ' +
+        `firstName = ${firstName}, email = ${email}`
     );
     return res.status(500).json({
       error: 'Something went wrong',
@@ -53,7 +53,9 @@ export const signUp = async (req, res) => {
     subject: 'Account activation link',
     html: `
         <h1>Please use the following link to activate your account</h1>
-        <p>${process.env.CLIENT_URL}/activate/${token}/</p>
+        <p>
+          <a href="${process.env.CLIENT_URL}/activate/${token}/">${process.env.CLIENT_URL}/activate/${token}/</a>
+        </p>
         <hr />
         <p>This email may contain sensitive information</p>
         <p>${process.env.CLIENT_URL}</p>
@@ -111,8 +113,8 @@ export const activateAccount = (req, res) => {
       if (!password) {
         console.error(
           '[controllers/auth/activateAccount] ' +
-          'Error occured while decrypting password with private key: ' +
-          `firstName = ${firstName}, email = ${email}`,
+            'Error occured while decrypting password with private key: ' +
+            `firstName = ${firstName}, email = ${email}`
         );
         return res.status(500).json({
           error: 'Something went wrong',
