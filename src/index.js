@@ -7,6 +7,7 @@ import bodyParser from 'body-parser';
 import authRouter from './routes/auth.js';
 import profileRouter from './routes/profile.js';
 import freeDictionaryRouter from './routes/freedictionary.js';
+import cardRouter from './routes/card.js';
 import { protect } from './middlewares/auth.js';
 
 const app = express();
@@ -32,6 +33,7 @@ app.use('/auth', authRouter);
 // Protected routes
 app.use('/profile', protect, profileRouter);
 app.use('/freedictionary', protect, freeDictionaryRouter);
+app.use('/cards', protect, cardRouter);
 
 app.listen(port, () => {
   console.log(`listening port ${port} - ${process.env.NODE_ENV}`);
