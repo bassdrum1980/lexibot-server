@@ -2,7 +2,6 @@ import 'dotenv/config.js';
 import express from 'express';
 import morgan from 'morgan';
 import cors from 'cors';
-import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
 import authRouter from './routes/auth.js';
 import profileRouter from './routes/profile.js';
@@ -12,12 +11,6 @@ import { protect } from './middlewares/auth.js';
 
 const app = express();
 const port = process.env.PORT || 8000;
-
-// db connection
-mongoose
-  .connect(process.env.DATABASE)
-  .then(() => console.log('DB connected'))
-  .catch((err) => console.log('DB CONNECTION ERROR: ' + err));
 
 // app middlewares
 app.use(morgan('dev'));
