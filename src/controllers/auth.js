@@ -1,7 +1,13 @@
 import prisma from '../db.js';
 import jwt from 'jsonwebtoken';
 import mail from '@sendgrid/mail';
-import { makeSalt, encryptPassword, comparePasswords } from '../utils/auth.js';
+import {
+  makeSalt,
+  encryptPassword,
+  comparePasswords,
+  encryptPasswordWithPublicKey,
+  decryptPasswordWithPrivateKey,
+} from '../utils/auth.js';
 
 mail.setApiKey(process.env.SENDGRID_API_KEY);
 
@@ -20,8 +26,20 @@ export const signUp = async (req, res) => {
   }
 
   // Generate a jwt-token with user name, email and password
+  const encryptedPassword = encryptPasswordWithPublicKey(password);
+  if (!encryptedPassword) {
+    console.error(
+      '[controllers/auth/signUp] ' +
+      'Error occured while encrypting password with public key: ' +
+      `firstName = ${firstName}, email = ${email}`,
+    );
+    return res.status(500).json({
+      error: 'Something went wrong',
+    });
+  }
+
   const token = jwt.sign(
-    { firstName, email, password },
+    { firstName, email, password: encryptedPassword },
     process.env.JWT_ACCOUNT_ACTIVATION,
     {
       expiresIn: '1d',
@@ -87,7 +105,19 @@ export const activateAccount = (req, res) => {
 
       // If token is ok
       // Get user info from token
-      const { firstName, email, password } = decoded;
+      const { firstName, email, password: encryptedPassword } = decoded;
+
+      const password = decryptPasswordWithPrivateKey(encryptedPassword);
+      if (!password) {
+        console.error(
+          '[controllers/auth/activateAccount] ' +
+          'Error occured while decrypting password with private key: ' +
+          `firstName = ${firstName}, email = ${email}`,
+        );
+        return res.status(500).json({
+          error: 'Something went wrong',
+        });
+      }
 
       // Save user in database
       try {
