@@ -5,7 +5,7 @@ const cardRouter = Router();
 
 cardRouter.post('/', createCard);
 cardRouter.get('/:id', getCard);
-cardRouter.post('/:id', updateCard);
+cardRouter.put('/:id', updateCard);
 cardRouter.delete('/:id', deleteCard);
 
 export default cardRouter;
