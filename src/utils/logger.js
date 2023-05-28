@@ -4,7 +4,7 @@ import 'winston-daily-rotate-file';
 
 const Transports = {
   console: new transports.Console({
-    level: process.env.LOG_LEVEL_CONSOLE || 'info',
+    level: process.env.LOG_LEVEL_CONSOLE || 'debug',
     format: format.combine(
       format.colorize(),
       format.printf((info) => `${info.level} ${info.message.replace(/^\s+|\s+$/g, '')}`),
