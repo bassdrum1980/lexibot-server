@@ -5,7 +5,7 @@
   "main": "src/index.js",
   "scripts": {
     "start": "nodemon src/index.js",
-    "test": "jest --verbose --runInBand"
+    "test": "mocha"
   },
   "type": "module",
   "keywords": [],
@@ -28,7 +28,7 @@
     "ts-node": "^10.9.1"
   },
   "devDependencies": {
-    "jest": "^29.5.0",
+    "mocha": "^10.2.0",
     "prisma": "^4.14.0",
     "supertest": "^6.3.3"
   }
