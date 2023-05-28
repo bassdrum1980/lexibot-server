@@ -38,3 +38,5 @@ app.use('/cards', protect, cardRouter);
 app.listen(port, () => {
   console.log(`listening port ${port} - ${process.env.NODE_ENV}`);
 });
+
+export default app;
