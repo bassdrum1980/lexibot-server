@@ -3,7 +3,7 @@ import app from '../src/index.js';
 import 'dotenv/config.js';
 import assert from 'assert';
 
-const token = process.env.TEST_USER_BREAER_TOKEN;
+const token = process.env.TEST_USER_BEARER_TOKEN;
 
 describe('POST /cards', () => {
   let cardId;
