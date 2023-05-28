@@ -12,7 +12,7 @@ const Transports = {
   }),
   file: new transports.DailyRotateFile({
     level: process.env.LOG_LEVEL_FILE || 'info',
-    filename: './log/%DATE%.log',
+    filename: './logs/%DATE%.log',
     datePattern: 'YYYY-MM-DD',
     maxSize: '20m',
     maxFiles: '14d',
