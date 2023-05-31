@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import crypto from 'node:crypto';
-import getLogger from './logger';
+import getLogger from './logger.js';
 
 // Set up logger
 const logger = getLogger();
