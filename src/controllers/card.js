@@ -1,10 +1,13 @@
 import prisma from '../db.js';
+import getLogger from '../utils/logger.js';
+
+const logger = getLogger();
 
 async function createCard(req, res) {
   let responseStatus;
   let result;
   const { userId, word, attributes } = req.body;
-  console.log(`[contollers/card/postCard] req.body = ${JSON.stringify(req.body)}`);
+  logger.debug(`[contollers/card/postCard] req.body = ${JSON.stringify(req.body)}`);
 
   const newCard = {
     userId,
@@ -17,7 +20,7 @@ async function createCard(req, res) {
     responseStatus = 200;
     result = { data: createdCard };
   } catch (error) {
-    console.error(
+    logger.error(
       '[contollers/card/postCard]' +
       `card creation error: req.body = ${JSON.stringify(req.body)}, error = ${error}`);
     responseStatus = 500;
@@ -31,7 +34,7 @@ async function getCard(req, res) {
   let responseStatus;
   let result;
   const id = Number(req.params.id);
-  console.log(`[contollers/card/getCard] id = ${id}`);
+  logger.debug(`[contollers/card/getCard] id = ${id}`);
 
   const where = { id };
   const select = {
@@ -51,7 +54,7 @@ async function getCard(req, res) {
       result = { data: foundCard };
     }
   } catch (error) {
-    console.error(
+    logger.error(
       '[contollers/card/getCard]' +
       `card find error: id = ${id}, error = ${error}`);
     responseStatus = 500;
@@ -65,9 +68,9 @@ async function updateCard(req, res) {
   let responseStatus;
   let result;
   const id = Number(req.params.id);
-  console.log(`[contollers/card/updateCard] id = ${id}`);
+  logger.debug(`[contollers/card/updateCard] id = ${id}`);
   const { word, attributes, status } = req.body;
-  console.log(`[contollers/card/postCard] req.body = ${JSON.stringify(req.body)}`);
+  logger.debug(`[contollers/card/postCard] req.body = ${JSON.stringify(req.body)}`);
 
   const where = { id };
   const data = { word, attributes, status };
@@ -77,7 +80,7 @@ async function updateCard(req, res) {
     responseStatus = 200;
     result = { data: updatedCard };
   } catch (error) {
-    console.error(
+    logger.error(
       '[contollers/card/updateCard]' +
       'card update error: ' +
       `id = ${id}, req.body = ${JSON.stringify(req.body)}, error = ${error}`);
@@ -92,7 +95,7 @@ async function deleteCard(req, res) {
   let responseStatus;
   let result;
   const id = Number(req.params.id);
-  console.log(`[contollers/card/deleteCard] id = ${id}`);
+  logger.debug(`[contollers/card/deleteCard] id = ${id}`);
 
   const where = { id };
 
@@ -101,7 +104,7 @@ async function deleteCard(req, res) {
     responseStatus = 200;
     result = { data: deletedCard };
   } catch (error) {
-    console.error(
+    logger.error(
       '[contollers/card/deleteCard]' +
       `card delete error: id = ${id}, error = ${error}`);
     responseStatus = 500;
