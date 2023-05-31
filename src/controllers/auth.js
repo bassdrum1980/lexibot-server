@@ -8,7 +8,12 @@ import {
   encryptPasswordWithPublicKey,
   decryptPasswordWithPrivateKey,
 } from '../utils/auth.js';
+import getLogger from '../utils/logger.js';
 
+// Set up logger
+const logger = getLogger();
+
+// Set up SendGrid
 mail.setApiKey(process.env.SENDGRID_API_KEY);
 
 export const signUp = async (req, res) => {
@@ -28,7 +33,7 @@ export const signUp = async (req, res) => {
   // Generate a jwt-token with user name, email and password
   const encryptedPassword = encryptPasswordWithPublicKey(password);
   if (!encryptedPassword) {
-    console.error(
+    logger.error(
       '[controllers/auth/signUp] ' +
         'Error occured while encrypting password with public key: ' +
         `firstName = ${firstName}, email = ${email}`
@@ -72,6 +77,10 @@ export const signUp = async (req, res) => {
   } catch (error) {
     console.log('SIGNUP EMAIL SENT ERROR', error);
 
+    logger.error(
+      '[controllers/auth/signUp] ' + 'Signup email sent error' + error
+    );
+
     return res.json({
       message: error.message,
     });
@@ -83,8 +92,10 @@ export const activateAccount = (req, res) => {
 
   // If token is not provided
   if (!token) {
-    console.log('NO TOKEN PROVIDED IN ACCOUNT ACTIVATION');
-
+    logger.error(
+      '[controllers/auth/activateAccount] ' +
+        'No token provided in account activation'
+    );
     return res.status(400).json({
       message: 'Something went wrong. Try again.',
     });
@@ -98,7 +109,11 @@ export const activateAccount = (req, res) => {
     async (error, decoded) => {
       // If token is expired
       if (error) {
-        console.log('JWT VERIFY IN ACCOUNT ACTIVATION ERROR', error);
+        logger.error(
+          '[controllers/auth/activateAccount] ' +
+            'JWT verify in account activation error: ' +
+            error
+        );
 
         return res.status(401).json({
           error: 'Expired link.',
@@ -111,7 +126,7 @@ export const activateAccount = (req, res) => {
 
       const password = decryptPasswordWithPrivateKey(encryptedPassword);
       if (!password) {
-        console.error(
+        logger.error(
           '[controllers/auth/activateAccount] ' +
             'Error occured while decrypting password with private key: ' +
             `firstName = ${firstName}, email = ${email}`
@@ -135,13 +150,21 @@ export const activateAccount = (req, res) => {
           },
         });
 
-        console.log('SAVE USER IN ACCOUNT ACTIVATION SUCCESS', user);
+        logger.info(
+          '[controllers/auth/activateAccount] ' +
+            'Save user in account activation success: ' +
+            user
+        );
 
         return res.json({
           message: 'Signup success. Please signin.',
         });
-      } catch (e) {
-        console.error('SAVE USER IN ACCOUNT ACTIVATION ERROR', e);
+      } catch (error) {
+        logger.error(
+          '[controllers/auth/activateAccount] ' +
+            'Save user in account activation error: ' +
+            error
+        );
 
         return res.status(500).json({
           message: 'Server Error',
@@ -186,7 +209,9 @@ export const signIn = async (req, res) => {
     });
   } catch (error) {
     // Any other error, return error
-    console.error('SIGN IN ERROR', error);
+    logger.error(
+      '[controllers/auth/signIn] ' + 'Sign in error: ' + error.message
+    );
 
     return res.status(500).json({
       message: 'Server Error',
