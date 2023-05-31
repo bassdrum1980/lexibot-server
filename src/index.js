@@ -8,9 +8,11 @@ import profileRouter from './routes/profile.js';
 import freeDictionaryRouter from './routes/freedictionary.js';
 import cardRouter from './routes/card.js';
 import { protect } from './middlewares/auth.js';
+import getLogger from './utils/logger.js';
 
 const app = express();
 const port = process.env.PORT || 8000;
+const logger = getLogger();
 
 // app middlewares
 app.use(morgan('dev'));
@@ -29,5 +31,5 @@ app.use('/freedictionary', protect, freeDictionaryRouter);
 app.use('/cards', protect, cardRouter);
 
 app.listen(port, () => {
-  console.log(`listening port ${port} - ${process.env.NODE_ENV}`);
+  logger.info(`[index] app start, listening port ${port} - ${process.env.NODE_ENV}`);
 });
