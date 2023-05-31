@@ -4,7 +4,8 @@
   "description": "",
   "main": "src/index.js",
   "scripts": {
-    "start": "nodemon src/index.js"
+    "start": "nodemon src/index.js",
+    "test": "mocha"
   },
   "type": "module",
   "keywords": [],
@@ -28,6 +29,8 @@
     "winston-daily-rotate-file": "^4.7.1"
   },
   "devDependencies": {
-    "prisma": "^4.14.0"
+    "mocha": "^10.2.0",
+    "prisma": "^4.14.0",
+    "supertest": "^6.3.3"
   }
 }
