@@ -29,7 +29,7 @@ export const protect = (req, res, next) => {
     logger.error(
       '[middlewares/auth/protect] ' +
         'JWT verify in protect middleware error: ' +
-        `error = ${error}`
+        `error = ${error.message}`
     );
 
     res.status(401);

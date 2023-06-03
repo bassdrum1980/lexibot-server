@@ -18,7 +18,7 @@ export function encryptPasswordWithPublicKey(password) {
     logger.error(
       '[utils/auth/encryptPasswordWithPublicKey] ' +
         'Error occured while encrypting password with public key: ' +
-        `error = ${error}`
+        `error = ${error.message}`
     );
     result = null;
   }
@@ -42,7 +42,7 @@ export function decryptPasswordWithPrivateKey(encryptedPassword) {
     logger.error(
       '[utils/auth/decryptPasswordWithPrivateKey] ' +
         'Error occured while decrypting password with private key: ' +
-        `error = ${error}`
+        `error = ${error.message}`
     );
     result = null;
   }
@@ -60,7 +60,7 @@ export function encryptPassword(password, salt) {
     logger.error(
       '[utils/auth/encryptPassword] ' +
         'Error occured while encrypting password: ' +
-        `error = ${error}`
+        `error = ${error.message}`
     );
     return '';
   }

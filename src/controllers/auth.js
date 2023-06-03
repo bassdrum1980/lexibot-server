@@ -75,10 +75,10 @@ export const signUp = async (req, res) => {
       message: `Email has been sent to ${email}. Follow the instructions to activate your account.`,
     });
   } catch (error) {
-    console.log('SIGNUP EMAIL SENT ERROR', error);
-
     logger.error(
-      '[controllers/auth/signUp] ' + 'Signup email sent error' + error
+      '[controllers/auth/signUp] ' +
+        'Signup email sent error' +
+        `firstName = ${firstName}, email = ${email}, error = ${error.message}`
     );
 
     return res.json({
@@ -112,7 +112,7 @@ export const activateAccount = (req, res) => {
         logger.error(
           '[controllers/auth/activateAccount] ' +
             'JWT verify in account activation error: ' +
-            error
+            `error = ${error.message}`
         );
 
         return res.status(401).json({
@@ -129,7 +129,7 @@ export const activateAccount = (req, res) => {
         logger.error(
           '[controllers/auth/activateAccount] ' +
             'Error occured while decrypting password with private key: ' +
-            `firstName = ${firstName}, email = ${email}`
+            `firstName = ${firstName}, email = ${email}, error = ${error.message}`
         );
         return res.status(500).json({
           error: 'Something went wrong',
@@ -210,7 +210,9 @@ export const signIn = async (req, res) => {
   } catch (error) {
     // Any other error, return error
     logger.error(
-      '[controllers/auth/signIn] ' + 'Sign in error: ' + error.message
+      '[controllers/auth/signIn] ' +
+        'Sign in error: ' +
+        `email = ${email}, error = ${error.message}`
     );
 
     return res.status(500).json({
