@@ -6,8 +6,10 @@ const logger = getLogger();
 async function createCard(req, res) {
   let responseStatus;
   let result;
-  const { userId, word, attributes } = req.body;
-  logger.debug(`[contollers/card/postCard] req.body = ${JSON.stringify(req.body)}`);
+  const userId = req.user.id;
+  const { word, attributes } = req.body;
+  logger.debug('[contollers/card/postCard] ' +
+    `userId = ${userId}, word = ${word}, attributes = ${JSON.stringify(attributes)}`);
 
   const newCard = {
     userId,
@@ -20,8 +22,7 @@ async function createCard(req, res) {
     responseStatus = 200;
     result = { data: createdCard };
   } catch (error) {
-    logger.error(
-      '[contollers/card/postCard]' +
+    logger.error('[contollers/card/postCard]' +
       `card creation error: req.body = ${JSON.stringify(req.body)}, error = ${error}`);
     responseStatus = 500;
     result = { error: 'Server error' };
