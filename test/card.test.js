@@ -35,12 +35,12 @@ describe('POST /cards', () => {
     cardId = response.body.data.id;
   });
 
-  it('should return 500', async () => {
+  it('should return 422', async () => {
     const response = await request(app)
       .post('/cards/')
       .set('Authorization', `Bearer ${token}`)
       .set('Accept', 'application/json');
-    assert.deepStrictEqual(response.status, 500);
+    assert.deepStrictEqual(response.status, 422);
   });
 
 });
@@ -51,6 +51,9 @@ describe('GET /cards/:id', () => {
   before(async () => {
     const card = {
       word: 'test',
+      attributes: {
+        word: 'test',
+      },
     };
     const response = await request(app)
       .post('/cards/')
@@ -95,12 +98,15 @@ describe('GET /cards/:id', () => {
   });
 });
 
-describe('PUT /cards/:id', () => {
+describe('PATCH /cards/:id', () => {
   let cardId;
 
   before(async () => {
     const card = {
       word: 'test',
+      attributes: {
+        word: 'test',
+      },
     };
     const response = await request(app)
       .post('/cards/')
@@ -122,9 +128,12 @@ describe('PUT /cards/:id', () => {
   it('should return 200 and card data', async () => {
     const updatedCard = {
       word: 'updated',
+      attributes: {
+        word: 'updated',
+      },
     };
     const response = await request(app)
-      .put(`/cards/${cardId}`)
+      .patch(`/cards/${cardId}`)
       .send(updatedCard)
       .set('Authorization', `Bearer ${token}`)
       .set('Accept', 'application/json');
@@ -133,12 +142,12 @@ describe('PUT /cards/:id', () => {
     assert.deepStrictEqual(response.body.data.word, updatedCard.word);
   });
 
-  it('should return 500', async () => {
+  it('should return 422', async () => {
     const response = await request(app)
-      .put('/cards/abc')
+      .patch('/cards/abc')
       .set('Authorization', `Bearer ${token}`)
       .set('Accept', 'application/json');
-    assert.deepStrictEqual(response.status, 500);
+    assert.deepStrictEqual(response.status, 422);
   });
 });
 
@@ -148,6 +157,9 @@ describe('DELETE /cards/:id', () => {
   before(async () => {
     const card = {
       word: 'test',
+      attributes: {
+        word: 'test',
+      },
     };
     const response = await request(app)
       .post('/cards/')
