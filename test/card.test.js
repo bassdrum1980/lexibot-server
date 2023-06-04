@@ -19,8 +19,10 @@ describe('POST /cards', () => {
 
   it('should return 200 and card data', async () => {
     const card = {
-      userId: Number(process.env.TEST_USER_ID),
       word: 'test',
+      attributes: {
+        word: 'test',
+      },
     };
     const response = await request(app)
       .post('/cards/')
@@ -29,7 +31,7 @@ describe('POST /cards', () => {
       .set('Accept', 'application/json');
     assert.deepStrictEqual(response.status, 200);
     assert.deepStrictEqual(response.body.data.word, card.word);
-    assert.deepStrictEqual(response.body.data.userId, card.userId);
+    assert.deepStrictEqual(response.body.data.attributes.word, card.attributes.word);
     cardId = response.body.data.id;
   });
 
@@ -48,7 +50,6 @@ describe('GET /cards/:id', () => {
 
   before(async () => {
     const card = {
-      userId: Number(process.env.TEST_USER_ID),
       word: 'test',
     };
     const response = await request(app)
@@ -99,7 +100,6 @@ describe('PUT /cards/:id', () => {
 
   before(async () => {
     const card = {
-      userId: Number(process.env.TEST_USER_ID),
       word: 'test',
     };
     const response = await request(app)
@@ -147,7 +147,6 @@ describe('DELETE /cards/:id', () => {
 
   before(async () => {
     const card = {
-      userId: Number(process.env.TEST_USER_ID),
       word: 'test',
     };
     const response = await request(app)
