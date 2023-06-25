@@ -115,9 +115,39 @@ async function deleteCard(req, res) {
   return res.status(responseStatus).json(result);
 }
 
+async function getCards(req, res) {
+  let responseStatus;
+  let result;
+  const userId = req.user.id;
+  logger.debug(`[contollers/card/getCards] userId = ${userId}`);
+
+  const where = { userId };
+  const select = {
+    id: true,
+    word: true,
+    status: true,
+    attributes: true,
+  };
+
+  try {
+    const foundCards = await prisma.card.findMany({ where, select });
+    responseStatus = 200;
+    result = { data: foundCards };
+  } catch (error) {
+    logger.error(
+      '[contollers/card/getCards]' +
+      `cards find error: userId = ${userId}, error = ${error}`);
+    responseStatus = 500;
+    result = { error: 'Server error' };
+  }
+
+  return res.status(responseStatus).json(result);
+}
+
 export {
   createCard,
   getCard,
   updateCard,
   deleteCard,
+  getCards,
 };

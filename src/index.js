@@ -6,7 +6,7 @@ import bodyParser from 'body-parser';
 import authRouter from './routes/auth.js';
 import profileRouter from './routes/profile.js';
 import freeDictionaryRouter from './routes/freedictionary.js';
-import cardRouter from './routes/card.js';
+import cardsRouter from './routes/cards.js';
 import { protect } from './middlewares/auth.js';
 import getLogger from './utils/logger.js';
 
@@ -28,7 +28,7 @@ app.use('/auth', authRouter);
 // Protected routes
 app.use('/profile', protect, profileRouter);
 app.use('/freedictionary', protect, freeDictionaryRouter);
-app.use('/cards', protect, cardRouter);
+app.use('/cards', protect, cardsRouter);
 
 app.listen(port, () => {
   logger.info(`[index] app start, listening port ${port} - ${process.env.NODE_ENV}`);
