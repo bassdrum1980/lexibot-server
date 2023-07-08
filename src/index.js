@@ -6,7 +6,7 @@ import bodyParser from 'body-parser';
 import authRouter from './routes/auth.js';
 import profileRouter from './routes/profile.js';
 import freeDictionaryRouter from './routes/freedictionary.js';
-import cardsRouter from './routes/cards.js';
+import cardsRouter from './routes/card.js';
 import { protect } from './middlewares/auth.js';
 import getLogger from './utils/logger.js';
 

@@ -5,7 +5,7 @@ import {
   updateCard,
   deleteCard,
   getCards,
-} from '../controllers/cards.js';
+} from '../controllers/card.js';
 import { createCardValidator, updateCardValidator } from '../validators/card.js';
 import { runValidation } from '../validators/index.js';
 
