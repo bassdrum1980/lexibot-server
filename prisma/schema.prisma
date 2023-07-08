@@ -26,7 +26,7 @@ model Card {
   userId        Int
   word          String
   status        CardStatus @default(new)
-  nextDate      DateTime?  @db.Date
+  nextDate      Int?
   attributes    Json?
   createdAt     DateTime   @default(now()) @db.Timestamp(6)
   modifiedAt    DateTime   @default(now()) @db.Timestamp(6)
