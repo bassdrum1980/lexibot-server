@@ -128,6 +128,7 @@ async function getCards(req, res) {
     userData.attributes.newCardCount :
     userData.attributes.newCardCount - userData.attributes.newCardToday;
 
+  const card = new Card();
   const foundCards = await card.createQueue(userId, countCard, currentDay);
   if (foundCards) {
     responseStatus = 200;
