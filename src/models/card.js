@@ -123,6 +123,12 @@ export default class Card {
   async createQueue(userId, countCard, currentDay) {
     let result;
 
+    const select = {
+      id: true,
+      word: true,
+      attributes: true,
+    };
+
     try {
       // получим карточки со статусом new 
       const newCards = await prisma.card.findMany({
@@ -130,11 +136,7 @@ export default class Card {
           userId,
           status: 'new',
         },
-        select: {
-          id: true,
-          word: true,
-          attributes: true,
-        },
+        select,
       });
 
       // получим relearning карточки
@@ -143,11 +145,7 @@ export default class Card {
           userId,
           status: 'relearning',
         },
-        select: {
-          id: true,
-          word: true,
-          attributes: true,
-        },
+        select,
       });
 
       // получим inactive карточки
@@ -158,11 +156,7 @@ export default class Card {
             userId,
             status: 'inactive',
           },
-          select: {
-            id: true,
-            word: true,
-            attributes: true,
-          },
+          select,
           take: countCard - newCards.length,
         });
       }
@@ -176,11 +170,7 @@ export default class Card {
             lte: currentDay,
           },
         },
-        select: {
-          id: true,
-          word: true,
-          attributes: true,
-        },
+        select,
       });
       result = [...newCards, ...relearningCards, ...inactiveCards, ...reviewCards];
     } catch (error) {
