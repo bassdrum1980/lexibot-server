@@ -6,14 +6,14 @@ import {
   deleteCard,
   getCards,
 } from '../controllers/card.js';
-import { createCardValidator, updateCardValidator } from '../validators/card.js';
+import { createCardValidator } from '../validators/card.js';
 import { runValidation } from '../validators/index.js';
 
 const cardsRouter = Router();
 
 cardsRouter.post('/', createCardValidator, runValidation, createCard);
 cardsRouter.get('/:id', getCard);
-cardsRouter.patch('/:id', updateCardValidator, runValidation, updateCard);
+cardsRouter.patch('/:id', runValidation, updateCard);
 cardsRouter.delete('/:id', deleteCard);
 cardsRouter.get('/', getCards);
 
