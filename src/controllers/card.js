@@ -1,4 +1,3 @@
-import prisma from '../db.js';
 import getLogger from '../utils/logger.js';
 import User from '../models/user.js';
 import Card from '../models/card.js';
@@ -57,11 +56,11 @@ async function updateCard(req, res) {
 
   const cardId = Number(req.params.id);
   logger.debug(`[contollers/card/updateCard] cardId = ${cardId}`);
-  const { word, attributes, status } = req.body;
+  const { word, attributes, status, nextDate } = req.body;
   logger.debug(`[contollers/card/postCard] req.body = ${JSON.stringify(req.body)}`);
 
   const card = new Card();
-  const updatedCard = await card.update(cardId, word, attributes, status);
+  const updatedCard = await card.update(cardId, word, attributes, status, nextDate);
   if (updatedCard) {
     responseStatus = 200;
     result = { data: updatedCard };
@@ -101,7 +100,7 @@ async function getCards(req, res) {
 
   const user = new User(userId);
   const userData = await user.get();
-  if (userData === null) {
+  if (userData === null || userData.attributes?.timezone === undefined) {
     responseStatus = 500;
     result = { error: 'Server error' };
     return res.status(responseStatus).json(result);
@@ -129,7 +128,7 @@ async function getCards(req, res) {
     userData.attributes.newCardCount - userData.attributes.newCardToday;
 
   const card = new Card();
-  const foundCards = await card.createQueue(userId, countCard, currentDay);
+  const foundCards = await card.getPractice(userId, countCard, currentDay);
   if (foundCards) {
     responseStatus = 200;
     result = { data: foundCards };

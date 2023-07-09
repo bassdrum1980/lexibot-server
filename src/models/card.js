@@ -50,6 +50,7 @@ export default class Card {
           word: true,
           status: true,
           attributes: true,
+          nextDate: true,
         },
       });
       if (result === null) result = undefined;
@@ -70,21 +71,22 @@ export default class Card {
    * @param {string} word - Word
    * @param {object} attributes - Card's attributes
    * @param {string} status - Card's status
+   * @param {Date} nextDate - Card's next date
    * @returns {object|null}
    */
-  async update(cardId, word, attributes, status) {
+  async update(cardId, word, attributes, status, nextDate) {
     let result;
     try {
       result = await prisma.card.update({
         where: { id: cardId },
-        data: { word, attributes, status },
+        data: { word, attributes, status, nextDate, modifiedAt: new Date() },
       });
     } catch (error) {
       logger.error(
         '[models/card/update] ' +
         'Failed to update card data: ' +
         `cardId = ${cardId}, word = ${word}, attributes = ${JSON.stringify(attributes)}, ` +
-        `status = ${status}, error = ${error}`
+        `status = ${status}, nextDate = ${nextDate}, error = ${error}`
       );
       result = null;
     }
@@ -114,19 +116,21 @@ export default class Card {
   }
 
   /**
-   * @description Get queue of cards by user id
+   * @description Get cards for practice
    * @param  {number} userId
    * @param  {number} countCard
    * @param  {number} currentDay
    * @returns {array of object|null}
    */
-  async createQueue(userId, countCard, currentDay) {
+  async getPractice(userId, countCard, currentDay) {
     let result;
 
     const select = {
       id: true,
       word: true,
       attributes: true,
+      status: true,
+      nextDate: true,
     };
 
     try {
