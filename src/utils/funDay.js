@@ -10,7 +10,6 @@ import 'dotenv/config.js';
  * @returns {number} день в формате YYMMDD
  */
 export function getDay(timezone) {
-
   let timeClient = new Date();
 
   // час, когда мы считаем, что начался новый день 
