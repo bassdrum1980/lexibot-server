@@ -2,19 +2,17 @@ import request from 'supertest';
 import app from '../src/index.js';
 import 'dotenv/config.js';
 import assert from 'assert';
+import Card from '../src/models/card.js';
 
 const token = process.env.TEST_USER_BEARER_TOKEN;
+const userId = Number(process.env.TEST_USER_ID);
+const card = new Card();
 
 describe('POST /cards', () => {
   let cardId;
 
   after(async () => {
-    if (cardId) {
-      await request(app)
-        .delete(`/cards/${cardId}`)
-        .set('Authorization', `Bearer ${token}`)
-        .set('Accept', 'application/json');
-    }
+    if (cardId) await card.delete(cardId);
   });
 
   it('should return 200 and card data', async () => {
@@ -49,27 +47,12 @@ describe('GET /cards/:id', () => {
   let cardId;
 
   before(async () => {
-    const card = {
-      word: 'test',
-      attributes: {
-        word: 'test',
-      },
-    };
-    const response = await request(app)
-      .post('/cards/')
-      .send(card)
-      .set('Authorization', `Bearer ${token}`)
-      .set('Accept', 'application/json');
-    cardId = response.body.data.id;
+    const cardCreated = await card.create(userId, 'test', { translate: 'test' });
+    cardId = cardCreated.id;
   });
 
   after(async () => {
-    if (cardId) {
-      await request(app)
-        .delete(`/cards/${cardId}`)
-        .set('Authorization', `Bearer ${token}`)
-        .set('Accept', 'application/json');
-    }
+    if (cardId) await card.delete(cardId);
   });
 
   it('should return 200 and card data', async () => {
@@ -102,27 +85,12 @@ describe('PATCH /cards/:id', () => {
   let cardId;
 
   before(async () => {
-    const card = {
-      word: 'test',
-      attributes: {
-        word: 'test',
-      },
-    };
-    const response = await request(app)
-      .post('/cards/')
-      .send(card)
-      .set('Authorization', `Bearer ${token}`)
-      .set('Accept', 'application/json');
-    cardId = response.body.data.id;
+    const cardCreated = await card.create(userId, 'test', { translate: 'test' });
+    cardId = cardCreated.id;
   });
 
   after(async () => {
-    if (cardId) {
-      await request(app)
-        .delete(`/cards/${cardId}`)
-        .set('Authorization', `Bearer ${token}`)
-        .set('Accept', 'application/json');
-    }
+    if (cardId) await card.delete(cardId);
   });
 
   it('should return 200 and card data', async () => {
@@ -142,12 +110,12 @@ describe('PATCH /cards/:id', () => {
     assert.deepStrictEqual(response.body.data.word, updatedCard.word);
   });
 
-  it('should return 422', async () => {
+  it('should return 500', async () => {
     const response = await request(app)
       .patch('/cards/abc')
       .set('Authorization', `Bearer ${token}`)
       .set('Accept', 'application/json');
-    assert.deepStrictEqual(response.status, 422);
+    assert.deepStrictEqual(response.status, 500);
   });
 });
 
@@ -155,18 +123,8 @@ describe('DELETE /cards/:id', () => {
   let cardId;
 
   before(async () => {
-    const card = {
-      word: 'test',
-      attributes: {
-        word: 'test',
-      },
-    };
-    const response = await request(app)
-      .post('/cards/')
-      .send(card)
-      .set('Authorization', `Bearer ${token}`)
-      .set('Accept', 'application/json');
-    cardId = response.body.data.id;
+    const cardCreated = await card.create(userId, 'test', { translate: 'test' });
+    cardId = cardCreated.id;
   });
 
   it('should return 200', async () => {

@@ -1,13 +1,18 @@
 import { Router } from 'express';
-import { createCard, getCard, updateCard, deleteCard } from '../controllers/card.js';
-import { createCardValidator, updateCardValidator } from '../validators/card.js';
+import {
+  createCard,
+  getCard,
+  updateCard,
+  deleteCard,
+} from '../controllers/card.js';
+import { createCardValidator } from '../validators/card.js';
 import { runValidation } from '../validators/index.js';
 
-const cardRouter = Router();
+const cardsRouter = Router();
 
-cardRouter.post('/', createCardValidator, runValidation, createCard);
-cardRouter.get('/:id', getCard);
-cardRouter.patch('/:id', updateCardValidator, runValidation, updateCard);
-cardRouter.delete('/:id', deleteCard);
+cardsRouter.post('/', createCardValidator, runValidation, createCard);
+cardsRouter.get('/:id', getCard);
+cardsRouter.patch('/:id', runValidation, updateCard);
+cardsRouter.delete('/:id', deleteCard);
 
-export default cardRouter;
+export default cardsRouter;

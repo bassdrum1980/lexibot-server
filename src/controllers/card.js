@@ -1,29 +1,23 @@
-import prisma from '../db.js';
 import getLogger from '../utils/logger.js';
+import Card from '../models/card.js';
 
 const logger = getLogger();
 
 async function createCard(req, res) {
   let responseStatus;
   let result;
+
   const userId = req.user.id;
   const { word, attributes } = req.body;
   logger.debug('[contollers/card/postCard] ' +
     `userId = ${userId}, word = ${word}, attributes = ${JSON.stringify(attributes)}`);
 
-  const newCard = {
-    userId,
-    word,
-    attributes,
-  };
-
-  try {
-    const createdCard = await prisma.card.create({ data: newCard });
+  const card = new Card();
+  const createdCard = await card.create(userId, word, attributes);
+  if (createdCard) {
     responseStatus = 200;
     result = { data: createdCard };
-  } catch (error) {
-    logger.error('[contollers/card/postCard]' +
-      `card creation error: req.body = ${JSON.stringify(req.body)}, error = ${error}`);
+  } else {
     responseStatus = 500;
     result = { error: 'Server error' };
   }
@@ -34,30 +28,19 @@ async function createCard(req, res) {
 async function getCard(req, res) {
   let responseStatus;
   let result;
-  const id = Number(req.params.id);
-  logger.debug(`[contollers/card/getCard] id = ${id}`);
 
-  const where = { id };
-  const select = {
-    id: true,
-    word: true,
-    status: true,
-    attributes: true,
-  };
+  const cardId = Number(req.params.id);
+  logger.debug(`[contollers/card/getCard] cardId = ${cardId}`);
 
-  try {
-    const foundCard = await prisma.card.findUnique({ where, select });
-    if (!foundCard) {
-      responseStatus = 404;
-      result = { error: 'Card not found' };
-    } else {
-      responseStatus = 200;
-      result = { data: foundCard };
-    }
-  } catch (error) {
-    logger.error(
-      '[contollers/card/getCard]' +
-      `card find error: id = ${id}, error = ${error}`);
+  const card = new Card();
+  const foundCard = await card.get(cardId);
+  if (foundCard) {
+    responseStatus = 200;
+    result = { data: foundCard };
+  } else if (foundCard === undefined) {
+    responseStatus = 404;
+    result = { error: 'Card not found' };
+  } else {
     responseStatus = 500;
     result = { error: 'Server error' };
   }
@@ -68,23 +51,18 @@ async function getCard(req, res) {
 async function updateCard(req, res) {
   let responseStatus;
   let result;
-  const id = Number(req.params.id);
-  logger.debug(`[contollers/card/updateCard] id = ${id}`);
-  const { word, attributes, status } = req.body;
+
+  const cardId = Number(req.params.id);
+  logger.debug(`[contollers/card/updateCard] cardId = ${cardId}`);
+  const { word, attributes, status, nextDate } = req.body;
   logger.debug(`[contollers/card/postCard] req.body = ${JSON.stringify(req.body)}`);
 
-  const where = { id };
-  const data = { word, attributes, status };
-
-  try {
-    const updatedCard = await prisma.card.update({ where, data });
+  const card = new Card();
+  const updatedCard = await card.update(cardId, word, attributes, status, nextDate);
+  if (updatedCard) {
     responseStatus = 200;
     result = { data: updatedCard };
-  } catch (error) {
-    logger.error(
-      '[contollers/card/updateCard]' +
-      'card update error: ' +
-      `id = ${id}, req.body = ${JSON.stringify(req.body)}, error = ${error}`);
+  } else {
     responseStatus = 500;
     result = { error: 'Server error' };
   }
@@ -95,19 +73,15 @@ async function updateCard(req, res) {
 async function deleteCard(req, res) {
   let responseStatus;
   let result;
-  const id = Number(req.params.id);
-  logger.debug(`[contollers/card/deleteCard] id = ${id}`);
+  const cardId = Number(req.params.id);
+  logger.debug(`[contollers/card/deleteCard] cardId = ${cardId}`);
 
-  const where = { id };
-
-  try {
-    const deletedCard = await prisma.card.delete({ where });
+  const card = new Card();
+  const deletedCard = await card.delete(cardId);
+  if (deletedCard) {
     responseStatus = 200;
     result = { data: deletedCard };
-  } catch (error) {
-    logger.error(
-      '[contollers/card/deleteCard]' +
-      `card delete error: id = ${id}, error = ${error}`);
+  } else {
     responseStatus = 500;
     result = { error: 'Server error' };
   }
