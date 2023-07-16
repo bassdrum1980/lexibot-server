@@ -1,7 +1,5 @@
 import getLogger from '../utils/logger.js';
-import User from '../models/user.js';
 import Card from '../models/card.js';
-import { getDay } from '../utils/funDay.js';
 
 const logger = getLogger();
 
@@ -91,59 +89,9 @@ async function deleteCard(req, res) {
   return res.status(responseStatus).json(result);
 }
 
-async function getCards(req, res) {
-  let responseStatus;
-  let result;
-
-  const userId = req.user.id;
-  logger.debug(`[contollers/card/getCards] userId = ${userId}`);
-
-  const user = new User(userId);
-  const userData = await user.get();
-  if (userData === null || userData.attributes?.timezone === undefined) {
-    responseStatus = 500;
-    result = { error: 'Server error' };
-    return res.status(responseStatus).json(result);
-  }
-
-  // получим текущий день клиента в формате yymmdd
-  const currentDay = getDay(userData.attributes.timezone);
-
-  // определим, первая ли тренировка это на сегодня
-  const firstTrain = (userData.attributes.lastPracticeDate === currentDay) ? false : true;
-
-  // если сегодня это первая тренировка, то обнулим число тренированных за сегодня новых карточек
-  if (firstTrain) {
-    const ifUpdated = await user.updateAttributes({ newCardToday: 0 });
-    if (!ifUpdated) {
-      responseStatus = 500;
-      result = { error: 'Server error' };
-      return res.status(responseStatus).json(result);
-    }
-  }
-
-  // определим сколько карточек new + inactive планируется к показу
-  const countCard = (firstTrain) ?
-    userData.attributes.newCardCount :
-    userData.attributes.newCardCount - userData.attributes.newCardToday;
-
-  const card = new Card();
-  const foundCards = await card.getPractice(userId, countCard, currentDay);
-  if (foundCards) {
-    responseStatus = 200;
-    result = { data: foundCards };
-  } else {
-    responseStatus = 500;
-    result = { error: 'Server error' };
-  }
-
-  return res.status(responseStatus).json(result);
-}
-
 export {
   createCard,
   getCard,
   updateCard,
   deleteCard,
-  getCards,
 };
