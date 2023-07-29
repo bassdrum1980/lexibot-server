@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import getLogger from '../utils/logger.js';
+import { getLogger } from '../utils/logger.js';
 
 // Set up logger
 const logger = getLogger();
@@ -28,8 +28,8 @@ export const protect = (req, res, next) => {
   } catch (error) {
     logger.error(
       '[middlewares/auth/protect] ' +
-        'JWT verify in protect middleware error: ' +
-        `error = ${error.message}`
+      'JWT verify in protect middleware error: ' +
+      `error = ${error.message}`
     );
 
     res.status(401);

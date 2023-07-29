@@ -1,4 +1,4 @@
-import getLogger from '../utils/logger.js';
+import { getLogger } from '../utils/logger.js';
 import User from '../models/user.js';
 import Card from '../models/card.js';
 import { getDay } from '../utils/funDay.js';

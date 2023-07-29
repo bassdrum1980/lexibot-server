@@ -1,6 +1,6 @@
 import 'dotenv/config.js';
 import prisma from '../db.js';
-import getLogger from '../utils/logger.js';
+import { getLogger } from '../utils/logger.js';
 
 const logger = getLogger();
 
