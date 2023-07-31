@@ -2,7 +2,7 @@ import 'dotenv/config.js';
 import { createLogger, format, transports } from 'winston';
 import 'winston-daily-rotate-file';
 
-const Transports = {
+export const Transports = {
   console: new transports.Console({
     level: process.env.LOG_LEVEL_CONSOLE || 'debug',
     format: format.combine(
@@ -25,7 +25,7 @@ const Transports = {
 
 let logger;
 
-function getLogger() {
+export function getLogger() {
   if (!logger) {
     logger = createLogger({
       transports: [
@@ -36,5 +36,3 @@ function getLogger() {
   }
   return logger;
 }
-
-export default getLogger;

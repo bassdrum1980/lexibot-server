@@ -8,7 +8,7 @@ import {
   encryptPasswordWithPublicKey,
   decryptPasswordWithPrivateKey,
 } from '../utils/auth.js';
-import getLogger from '../utils/logger.js';
+import { getLogger } from '../utils/logger.js';
 
 // Set up logger
 const logger = getLogger();
@@ -35,8 +35,8 @@ export const signUp = async (req, res) => {
   if (!encryptedPassword) {
     logger.error(
       '[controllers/auth/signUp] ' +
-        'Error occured while encrypting password with public key: ' +
-        `firstName = ${firstName}, email = ${email}`
+      'Error occured while encrypting password with public key: ' +
+      `firstName = ${firstName}, email = ${email}`
     );
     return res.status(500).json({
       error: 'Something went wrong',
@@ -77,8 +77,8 @@ export const signUp = async (req, res) => {
   } catch (error) {
     logger.error(
       '[controllers/auth/signUp] ' +
-        'Signup email sent error' +
-        `firstName = ${firstName}, email = ${email}, error = ${error.message}`
+      'Signup email sent error' +
+      `firstName = ${firstName}, email = ${email}, error = ${error.message}`
     );
 
     return res.json({
@@ -94,7 +94,7 @@ export const activateAccount = (req, res) => {
   if (!token) {
     logger.error(
       '[controllers/auth/activateAccount] ' +
-        'No token provided in account activation'
+      'No token provided in account activation'
     );
     return res.status(400).json({
       message: 'Something went wrong. Try again.',
@@ -111,8 +111,8 @@ export const activateAccount = (req, res) => {
       if (error) {
         logger.error(
           '[controllers/auth/activateAccount] ' +
-            'JWT verify in account activation error: ' +
-            `error = ${error.message}`
+          'JWT verify in account activation error: ' +
+          `error = ${error.message}`
         );
 
         return res.status(401).json({
@@ -128,8 +128,8 @@ export const activateAccount = (req, res) => {
       if (!password) {
         logger.error(
           '[controllers/auth/activateAccount] ' +
-            'Error occured while decrypting password with private key: ' +
-            `firstName = ${firstName}, email = ${email}, error = ${error.message}`
+          'Error occured while decrypting password with private key: ' +
+          `firstName = ${firstName}, email = ${email}, error = ${error.message}`
         );
         return res.status(500).json({
           error: 'Something went wrong',
@@ -152,8 +152,8 @@ export const activateAccount = (req, res) => {
 
         logger.info(
           '[controllers/auth/activateAccount] ' +
-            'Save user in account activation success: ' +
-            user
+          'Save user in account activation success: ' +
+          user
         );
 
         return res.json({
@@ -162,8 +162,8 @@ export const activateAccount = (req, res) => {
       } catch (error) {
         logger.error(
           '[controllers/auth/activateAccount] ' +
-            'Save user in account activation error: ' +
-            error
+          'Save user in account activation error: ' +
+          error
         );
 
         return res.status(500).json({
@@ -211,8 +211,8 @@ export const signIn = async (req, res) => {
     // Any other error, return error
     logger.error(
       '[controllers/auth/signIn] ' +
-        'Sign in error: ' +
-        `email = ${email}, error = ${error.message}`
+      'Sign in error: ' +
+      `email = ${email}, error = ${error.message}`
     );
 
     return res.status(500).json({

@@ -1,4 +1,4 @@
-import getLogger from '../utils/logger.js';
+import { getLogger } from '../utils/logger.js';
 import { validationResult } from 'express-validator';
 
 const logger = getLogger();

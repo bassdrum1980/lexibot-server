@@ -1,5 +1,5 @@
 import request from 'supertest';
-import app from '../src/index.js';
+import { app, server } from '../src/index.js';
 import 'dotenv/config.js';
 import assert from 'assert';
 import Card from '../src/models/card.js';
@@ -8,10 +8,14 @@ const token = process.env.TEST_USER_BEARER_TOKEN;
 const userId = Number(process.env.TEST_USER_ID);
 const card = new Card();
 
+afterAll(async () => {
+  await server.close();
+});
+
 describe('GET /practices/:practiceType', () => {
   let cardIds = [];
 
-  before(async () => {
+  beforeAll(async () => {
     // cоздадим карточки, которые должны попасть в тренировку
     let cardCreated = await card.create(userId, 'test1', { translate: 'test1' });
     cardIds[0] = cardCreated.id;
@@ -27,13 +31,13 @@ describe('GET /practices/:practiceType', () => {
     cardIds[3] = cardCreated.id;
   });
 
-  after(async () => {
+  afterAll(async () => {
     for (const cardId of cardIds) {
       if (cardId) await card.delete(cardId);
     }
   });
 
-  it('should return 200 and card data for daily practice', async () => {
+  test('should return 200 and card data for daily practice', async () => {
     const response = await request(app)
       .get('/practices/daily')
       .set('Authorization', `Bearer ${token}`)

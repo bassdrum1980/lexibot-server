@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import crypto from 'node:crypto';
-import getLogger from './logger.js';
+import { getLogger } from '../utils/logger.js';
 
 // Set up logger
 const logger = getLogger();
@@ -17,8 +17,8 @@ export function encryptPasswordWithPublicKey(password) {
   } catch (error) {
     logger.error(
       '[utils/auth/encryptPasswordWithPublicKey] ' +
-        'Error occured while encrypting password with public key: ' +
-        `error = ${error.message}`
+      'Error occured while encrypting password with public key: ' +
+      `error = ${error.message}`
     );
     result = null;
   }
@@ -41,8 +41,8 @@ export function decryptPasswordWithPrivateKey(encryptedPassword) {
   } catch (error) {
     logger.error(
       '[utils/auth/decryptPasswordWithPrivateKey] ' +
-        'Error occured while decrypting password with private key: ' +
-        `error = ${error.message}`
+      'Error occured while decrypting password with private key: ' +
+      `error = ${error.message}`
     );
     result = null;
   }
@@ -59,8 +59,8 @@ export function encryptPassword(password, salt) {
   } catch (error) {
     logger.error(
       '[utils/auth/encryptPassword] ' +
-        'Error occured while encrypting password: ' +
-        `error = ${error.message}`
+      'Error occured while encrypting password: ' +
+      `error = ${error.message}`
     );
     return '';
   }

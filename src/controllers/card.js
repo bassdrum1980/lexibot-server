@@ -1,4 +1,4 @@
-import getLogger from '../utils/logger.js';
+import { getLogger } from '../utils/logger.js';
 import Card from '../models/card.js';
 
 const logger = getLogger();
