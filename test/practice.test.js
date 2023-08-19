@@ -1,7 +1,6 @@
 import request from 'supertest';
 import { app, server } from '../src/index.js';
 import 'dotenv/config.js';
-import assert from 'assert';
 import Card from '../src/models/card.js';
 
 const token = process.env.TEST_USER_BEARER_TOKEN;
@@ -42,7 +41,32 @@ describe('GET /practices/:practiceType', () => {
       .get('/practices/daily')
       .set('Authorization', `Bearer ${token}`)
       .set('Accept', 'application/json');
-    assert.deepStrictEqual(response.status, 200);
-    assert.deepStrictEqual(response.body.data.length, 3);
+    expect(response.status).toBe(200);
+    expect(response.body.data.length).toBe(3);
+  });
+});
+
+describe('POST /practices/:practiceType', () => {
+  let cardId;
+  const cardStatus = 'review';
+
+  beforeAll(async () => {
+    const cardCreated = await card.create(userId, 'test1', { translate: 'test1' });
+    cardId = cardCreated.id;
+  });
+
+  afterAll(async () => {
+    await card.delete(cardId);
+  });
+
+  test('should return 200 and card data for daily practice', async () => {
+    const response = await request(app)
+      .post('/practices/daily')
+      .set('Authorization', `Bearer ${token}`)
+      .set('Accept', 'application/json')
+      .send({ cardId, cardStatus });
+    expect(response.status).toBe(200);
+    expect(response.body.data.cardId).toBe(cardId);
+    expect(response.body.data.status).toBe(cardStatus);
   });
 });
