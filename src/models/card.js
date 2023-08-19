@@ -47,6 +47,7 @@ export default class Card {
         where: { id: cardId },
         select: {
           id: true,
+          userId: true,
           word: true,
           status: true,
           attributes: true,
@@ -71,7 +72,7 @@ export default class Card {
    * @param {string} word - Word
    * @param {object} attributes - Card's attributes
    * @param {string} status - Card's status
-   * @param {Date} nextDate - Card's next date
+   * @param {number} nextDate - Card's next date
    * @returns {object|null}
    */
   async update(cardId, word, attributes, status, nextDate) {
