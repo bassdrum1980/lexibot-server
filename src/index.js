@@ -18,7 +18,7 @@ const logger = getLogger();
 // app middlewares
 app.use(morgan('dev'));
 if ((process.env.NODE_ENV = 'development')) {
-  app.use(cors({ origin: 'http://localhost:3000' }));
+  app.use(cors({ origin: 'http://localhost:7001' }));
 }
 app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: true }));
@@ -33,10 +33,9 @@ app.use('/cards', protect, cardsRouter);
 app.use('/practices', protect, practicesRouter);
 
 const server = app.listen(port, () => {
-  logger.info(`[index] app start, listening port ${port} - ${process.env.NODE_ENV}`);
+  logger.info(
+    `[index] app start, listening port ${port} - ${process.env.NODE_ENV}`
+  );
 });
 
-export {
-  app,
-  server,
-};
+export { app, server };
