@@ -16,7 +16,7 @@ model User {
   attributes    Json?
   statistics    Json?
   createdAt     DateTime   @default(now()) @db.Timestamp(6)
-  modifiedAt    DateTime   @default(now()) @db.Timestamp(6)
+  modifiedAt    DateTime   @updatedAt @db.Timestamp(6)
   cards         Card[]
   practices     Practice[]
 }
@@ -29,7 +29,7 @@ model Card {
   nextDate      Int?
   attributes    Json?
   createdAt     DateTime   @default(now()) @db.Timestamp(6)
-  modifiedAt    DateTime   @default(now()) @db.Timestamp(6)
+  modifiedAt    DateTime   @updatedAt @db.Timestamp(6)
   user          User       @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   practices     Practice[]
 }
@@ -58,5 +58,5 @@ model Article {
   slug          String     @unique
   tags          String[]
   createdAt     DateTime   @default(now()) @db.Timestamp(6)
-  modifiedAt    DateTime   @default(now()) @db.Timestamp(6)
+  modifiedAt    DateTime   @updatedAt @db.Timestamp(6)
 }
