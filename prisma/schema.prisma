@@ -51,3 +51,12 @@ enum CardStatus {
   review
 }
 
+model Article {
+  id            Int        @id @default(autoincrement())
+  title         String
+  content       String
+  slug          String     @unique
+  tags          String[]
+  createdAt     DateTime   @default(now()) @db.Timestamp(6)
+  modifiedAt    DateTime   @default(now()) @db.Timestamp(6)
+}
