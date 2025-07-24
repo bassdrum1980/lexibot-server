@@ -54,7 +54,7 @@ enum CardStatus {
 model Article {
   id            Int        @id @default(autoincrement())
   title         String
-  content       String
+  content       String     // HTML TODO: переехать на json с заданной структурой - безопаснее
   slug          String     @unique
   tags          String[]
   createdAt     DateTime   @default(now()) @db.Timestamp(6)
