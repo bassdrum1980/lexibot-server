@@ -37,4 +37,33 @@ export default class Article {
     }
     return result;
   }
+
+  /**
+   * @description Get article data
+   * @param {number} articleId - Card's id
+   * @returns {object|null|undefined}
+   */
+  async get(articleId) {
+    let result;
+    try {
+      // either article or null
+      result = await prisma.article.findUnique({
+        where: { id: articleId },
+        select: {
+          id: true,
+          title: true,
+          content: true,
+          tags: true,
+        },
+      });
+    } catch (error) {
+      logger.error(
+        '[models/article/getData] ' +
+          'Failed to get article data: ' +
+          `articleId = ${articleId}, error = ${error}`
+      );
+      result = undefined;
+    }
+    return result;
+  }
 }

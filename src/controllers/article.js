@@ -28,4 +28,27 @@ async function createArticle(req, res) {
   return res.status(responseStatus).json(result);
 }
 
-export { createArticle };
+async function getArticle(req, res) {
+  let responseStatus;
+  let result;
+
+  const id = Number(req.params.id);
+  logger.debug(`[contollers/article/getArticle] articleId = ${id}`);
+
+  const article = new Article();
+  const foundArticle = await article.get(id);
+  if (foundArticle) {
+    responseStatus = 200;
+    result = { data: foundArticle };
+  } else if (foundArticle === null) {
+    responseStatus = 404;
+    result = { error: 'Article not found' };
+  } else {
+    responseStatus = 500;
+    result = { error: 'Server error' };
+  }
+
+  return res.status(responseStatus).json(result);
+}
+
+export { getArticle, createArticle };
