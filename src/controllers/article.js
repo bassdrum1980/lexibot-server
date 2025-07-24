@@ -7,7 +7,7 @@ async function createArticle(req, res) {
   let responseStatus;
   let result;
 
-  const { title, content, slug, tags } = req.body;
+  const { title, content, slug, tags } = req.body.article;
   logger.debug(
     '[contollers/article/postArticle] ' +
       `title = ${title}, content = ${content}, slug = ${slug}, tags = ${JSON.stringify(
@@ -18,7 +18,7 @@ async function createArticle(req, res) {
   const article = new Article();
   const createdArticle = await article.create(title, content, slug, tags);
   if (createdArticle) {
-    responseStatus = 200;
+    responseStatus = 201;
     result = { data: createdArticle };
   } else {
     responseStatus = 500;
