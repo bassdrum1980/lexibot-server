@@ -9,8 +9,12 @@ async function createCard(req, res) {
 
   const userId = req.user.id;
   const { word, attributes } = req.body;
-  logger.debug('[contollers/card/postCard] ' +
-    `userId = ${userId}, word = ${word}, attributes = ${JSON.stringify(attributes)}`);
+  logger.debug(
+    '[controllers/card/postCard] ' +
+      `userId = ${userId}, word = ${word}, attributes = ${JSON.stringify(
+        attributes
+      )}`
+  );
 
   const card = new Card();
   const createdCard = await card.create(userId, word, attributes);
@@ -30,7 +34,7 @@ async function getCard(req, res) {
   let result;
 
   const cardId = Number(req.params.id);
-  logger.debug(`[contollers/card/getCard] cardId = ${cardId}`);
+  logger.debug(`[controllers/card/getCard] cardId = ${cardId}`);
 
   const card = new Card();
   const foundCard = await card.get(cardId);
@@ -53,12 +57,20 @@ async function updateCard(req, res) {
   let result;
 
   const cardId = Number(req.params.id);
-  logger.debug(`[contollers/card/updateCard] cardId = ${cardId}`);
+  logger.debug(`[controllers/card/updateCard] cardId = ${cardId}`);
   const { word, attributes, status, nextDate } = req.body;
-  logger.debug(`[contollers/card/postCard] req.body = ${JSON.stringify(req.body)}`);
+  logger.debug(
+    `[controllers/card/postCard] req.body = ${JSON.stringify(req.body)}`
+  );
 
   const card = new Card();
-  const updatedCard = await card.update(cardId, word, attributes, status, nextDate);
+  const updatedCard = await card.update(
+    cardId,
+    word,
+    attributes,
+    status,
+    nextDate
+  );
   if (updatedCard) {
     responseStatus = 200;
     result = { data: updatedCard };
@@ -74,7 +86,7 @@ async function deleteCard(req, res) {
   let responseStatus;
   let result;
   const cardId = Number(req.params.id);
-  logger.debug(`[contollers/card/deleteCard] cardId = ${cardId}`);
+  logger.debug(`[controllers/card/deleteCard] cardId = ${cardId}`);
 
   const card = new Card();
   const deletedCard = await card.delete(cardId);
@@ -89,9 +101,4 @@ async function deleteCard(req, res) {
   return res.status(responseStatus).json(result);
 }
 
-export {
-  createCard,
-  getCard,
-  updateCard,
-  deleteCard,
-};
+export { createCard, getCard, updateCard, deleteCard };

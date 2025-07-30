@@ -40,7 +40,7 @@ export default class Article {
 
   /**
    * @description Get article data
-   * @param {number} articleId - Card's id
+   * @param {number} articleId - Article's id
    * @returns {object|null|undefined}
    */
   async get(articleId) {

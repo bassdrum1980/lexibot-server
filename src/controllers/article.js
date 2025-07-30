@@ -9,7 +9,7 @@ async function createArticle(req, res) {
 
   const { title, content, slug, tags } = req.body.article;
   logger.debug(
-    '[contollers/article/postArticle] ' +
+    '[controllers/article/postArticle] ' +
       `title = ${title}, content = ${content}, slug = ${slug}, tags = ${JSON.stringify(
         tags
       )}`
@@ -33,7 +33,7 @@ async function getArticle(req, res) {
   let result;
 
   const id = Number(req.params.id);
-  logger.debug(`[contollers/article/getArticle] articleId = ${id}`);
+  logger.debug(`[controllers/article/getArticle] articleId = ${id}`);
 
   const article = new Article();
   const foundArticle = await article.get(id);
