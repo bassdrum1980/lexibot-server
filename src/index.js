@@ -8,6 +8,7 @@ import profileRouter from './routes/profile.js';
 import freeDictionaryRouter from './routes/freedictionary.js';
 import cardsRouter from './routes/card.js';
 import practicesRouter from './routes/practice.js';
+import articleRouter from './routes/article.js';
 import { protect } from './middlewares/auth.js';
 import { getLogger } from './utils/logger.js';
 
@@ -31,6 +32,7 @@ app.use('/profile', protect, profileRouter);
 app.use('/freedictionary', protect, freeDictionaryRouter);
 app.use('/cards', protect, cardsRouter);
 app.use('/practices', protect, practicesRouter);
+app.use('/articles', protect, articleRouter);
 
 const server = app.listen(port, () => {
   logger.info(

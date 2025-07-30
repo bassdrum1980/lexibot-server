@@ -11,8 +11,8 @@ async function getPractice(req, res) {
   const userId = req.user.id;
   const practiceType = req.params.practiceType;
   logger.debug(
-    '[contollers/practice/getPractice] ' +
-    `userId = ${userId}, practiceType = ${practiceType}`,
+    '[controllers/practice/getPractice] ' +
+      `userId = ${userId}, practiceType = ${practiceType}`
   );
 
   if (practiceType === 'daily') {
@@ -41,7 +41,8 @@ async function practiceDaily(userId) {
   const currentDay = getDay(userData.attributes.timezone);
 
   // определим, первая ли тренировка это на сегодня
-  const firstTrain = (userData.attributes.lastPracticeDate === currentDay) ? false : true;
+  const firstTrain =
+    userData.attributes.lastPracticeDate === currentDay ? false : true;
 
   // если сегодня это первая тренировка, то обнулим число тренированных за сегодня новых карточек
   if (firstTrain) {
@@ -57,9 +58,9 @@ async function practiceDaily(userId) {
   }
 
   // определим сколько карточек new + inactive планируется к показу
-  const countCard = (firstTrain) ?
-    userData.attributes.newCardCount :
-    userData.attributes.newCardCount - userData.attributes.newCardToday;
+  const countCard = firstTrain
+    ? userData.attributes.newCardCount
+    : userData.attributes.newCardCount - userData.attributes.newCardToday;
 
   const card = new Card();
   const foundCards = await card.getPractice(userId, countCard, currentDay);
@@ -77,6 +78,4 @@ async function practiceDaily(userId) {
   };
 }
 
-export {
-  getPractice,
-};
+export { getPractice };
